@@ -82,7 +82,12 @@ $('input#command').on('keypress', function(event) {
           }
           break;
         case 'get':
-          // ** figure out this command
+          var object = "";
+          for (int i = 1; i < commands.length; i++) {
+            object += commands[i];
+          }
+          object = object.trim();
+          playerGet(object);
           break;
         case 'attack':
           // ** figure this out
