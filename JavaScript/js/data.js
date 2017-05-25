@@ -19,11 +19,13 @@ var rooms = {
     directions: ['east','west'],
     connected: ['room2', 'room3'],
     secret: 'none',
-    objects: {
-      objectName: 'book',
-      objectDescription: 'An dusty old book that looks uninteresting.',
-      addInventory: false,
-    }
+    objects: [
+      {
+        objectName: 'book',
+        objectDescription: 'An dusty old book that looks mysterious.',
+        addInventory: true,
+      }
+    ]
   },
   room2: {
     id: 'room2',
@@ -33,11 +35,13 @@ var rooms = {
     directions: ['north','south'],
     connected: ['room1', 'room4', 'room5'],
     secret: 'none',
-    objects: {
-      objectName: 'mushroom',
-      objectDescription: 'Nasty smelling mushroom that looks uninteresting.',
-      addInventory: false,
-    }
+    objects: [
+      {
+        objectName: 'mushroom',
+        objectDescription: 'Nasty smelling mushroom that looks uninteresting.',
+        addInventory: false,
+      }
+    ]
   },
   room3: {
     id: 'room3',
@@ -46,11 +50,7 @@ var rooms = {
     directions: ['east','north'],
     connected: ['room1', 'room4'],
     secret: '',
-    objects: {
-      objectName: '',
-      objectDescription: '',
-      addInventory: false,
-    }
+    objects: [ ]
   },
   room4: {
     id: 'room4',
@@ -59,11 +59,7 @@ var rooms = {
     directions: ['south','east'],
     connected: ['room3','room2'],
     secret: '',
-    objects: {
-      objectName: '',
-      objectDescription: '',
-      addInventory: false,
-    }
+    objects: [ ]
   }
   /*
   room2: {
@@ -73,11 +69,13 @@ var rooms = {
     directions: [],
     connected: [],
     secret: '',
-    objects: {
-      objectName: '',
-      objectDescription: '',
-      addInventory: false,
-    }
+    objects: [
+      {
+        objectName: '',
+        objectDescription: '',
+        addInventory: false,
+      }
+    ]
   }
   */
 }
