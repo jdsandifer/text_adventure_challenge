@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 // possible inspiration: http://textadventures.co.uk/games/play/5zyoqrsugeopel3ffhz_vq
 
 /*
@@ -132,6 +134,7 @@ room 4: go south to room 3 or east to room 2
 room 5: only go north back to room 2
 */
 
+>>>>>>> origin/master
 $('#room').text(player.currentRoom);
 $('#description').text(rooms[player.currentRoom].description);
 
