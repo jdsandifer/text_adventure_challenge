@@ -1,3 +1,23 @@
+// possible inspiration: http://textadventures.co.uk/games/play/5zyoqrsugeopel3ffhz_vq
+
+/*
+  Things to keep in mind when building this game:
+  * What is the user's experience going to be on this story/adventure?
+  * Teach your player (e.g. consistent commands, messages, etc.)
+  * Story is important
+
+  Goal for today:
+  * 4 rooms (start small and add later)
+  * Character movement
+  * At least one item that is interactable
+  * Ability to use at least one item
+  * Character inventory (add, remove, display)
+  * Response/Conflict (monster, trap, etc.)
+  * Game over (exit, death, win, solved puzzle)
+
+  Game perspective: you're a mouse in a human world.
+*/
+
 $('#room').text(player.currentRoom);
 $('#description').text(rooms[player.currentRoom].description);
 
