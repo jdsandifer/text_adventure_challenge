@@ -1,0 +1,31 @@
+This game's story is about a mouse trying to find it's way through this oversized world.
+
+The player has no idea that it's a mouse but little clues here and there hint at it. For example, everything is huge, you like cheese a lot, and you dislike cats and big animals.
+
+While the player is tiny, we will assume that this mouse has the abilities and strength to manipulate various found objects.
+
+Room 1: Study
+This room is connected to the kitchen and a hole in the wall.
+"To the west, you see a messy looking hole in the wall that you could probably squeeze through if you tried. To the east, you see faint light spilling out from what looks like a kitchen."
+Description of the study (short):
+  TBD
+
+  items of no interest:
+    books, half broken bookshelves, well worn red-brown plush chair, shaded window, red velvet vintage smoking jacket, vintage smoking pipe and stand
+
+    The towering bookshelves are made of the same deep brown-red wood that you see outside the window. There are two aged bookshelves on each wall with the exception of the walls with the sooty window and wood-framed doorway. Most of the shelves are in decent condition but one is all but fallen apart. The lower shelves have a thick layer of dust dotted with an occasional footprint of something that looks maybe like a cat's paw. Each shelf is overfilled with a wide variety of well-used books of all sizes and colors. Its easy to tell which books have been read recently and others have collected dust bunnies for years.
+
+    The vintage smoking pipe is a deep brown wood with a brass connector between the worn bowl and curved stem. The pipe rests on an experienced pipe stand that has a matching wood base with horizontal gold painted pen lines with a slightly damaged corner and a faded brass upright for the pipe to rest on. The pipe stand smells of old tobacco and ashes. The pipe appeal seems to be very high to its owner but very low to you.
+    (https://www.pinterest.com/pin/390968811377385947/)
+Description of the study (long):
+  TBD
+
+Room 2: Kitchen
+
+Room 3: Hole in a wall
+
+Room 4: Overgrown backyard
+
+Room 5: Box of old cereal
+Using the knife on a box of cereal, you can open the box and enter it.
+But the box falls and traps you inside it. Your knife is dropped outside the box (lost from player's inventory and add the knife to the room's inventory).
