@@ -17,7 +17,7 @@
 
   Game perspective: you're a mouse in a human world.
 */
-
+$('#command-list').text(array);
 $('#room').text(player.currentRoom);
 $('#description').text(rooms[player.currentRoom].description);
 
