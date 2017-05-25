@@ -47,6 +47,23 @@ class Player
         return nil
     end
 
+    def inventory_search(name)
+        @inventory.each { |item|
+            if item.name == name or (name.size >= 5 and item.name.index(name))
+                return item
+            end
+        }
+        return nil
+    end
+
+    def inventory_remove(drop_item)
+        new_inv = []
+        @inventory.each { |item|
+            new_inv << item unless item == drop_item
+        }
+        @inventory = new_inv
+    end
+
     def move(direction)
         #binding.pry
         unless direction =~ /^(north|south)?(east|west)?$/
@@ -90,14 +107,39 @@ class Item
     end
 end
 
+def normalize_command(cmd)
+    cmd = cmd.sub(/^\s+/, '').sub(/\s+$/, '')
+    case
+        when cmd.match(/^pick up/)
+            return cmd.sub(/^pick up/, 'get')
+        when cmd.match(/^put down/)
+            return cmd.sub(/^put down/, 'drop')
+        when cmd.match(/^move/)
+            return cmd.sub(/^move/, 'go')
+        when "inventory".index(cmd)
+            return cmd.sub(/^i.*/, 'inventory')
+        when "look".index(cmd)
+            return cmd.sub(/^l\S*/, 'look')
+        when cmd =~ /^h(o(l(d)?)?)?\s/
+            return cmd.sub(/^h\S*/, 'hold')
+        when cmd =~ /^u(n(h(o(l(d)?)?)?)?)?\s*/
+            return cmd.sub(/^u\S*/, 'unhold')
+        else
+            return cmd
+    end
+end
+
 HELP = <<-EOH
 Valid commands:
-    look                view your surroundings
+    l[ook]              view your surroundings
     go <direction>      move around your environment
+    move <direction>    alias for 'go'
     search <direction>  locate hidden features
     get <object>        pick up an item
     drop <object>       put down an item
-    hold <object>       ready an item for use
+    h[old] <object>     ready an item for use, replacing held item (if any)
+    u[nhold]            place held item in your pack
+    i[nventory]         list items in your possession
     quit                leave the game
 
 Valid directions: n[orth] s[outh] e[ast] w[est]
@@ -109,9 +151,9 @@ EOH
 rooms = []
 
 rooms[0] = Room.new
-rooms[0].doors << Door.new('east')
+rooms[0].doors << Door.new('east', 'normal', false)
 rooms[0].items << Item.new('tapestry', 'a', 'south')
-rooms[0].items << Item.new('chisel', 'a', 'middle')
+#rooms[0].items << Item.new('chisel', 'a', 'middle')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
@@ -128,6 +170,19 @@ rooms[3] = Room.new
 
 #pc = Player.new(rooms[rand(rooms.size)])
 pc = Player.new(rooms[0])
+pc.inventory << Item.new('chisel', 'a', 'middle')
+
+
+puts <<-EOH
+You are walking through the basement of an abandoned building as you
+explore the old part of this city.
+
+Suddenly the floor weakens and gives way! You fall through a hole!
+
+You pick yourself off the ground and try to make out your surroundings.
+
+Type 'help' at any time for help.
+EOH
 
 
 while true do
@@ -137,9 +192,9 @@ while true do
     break unless command = gets
     command = command.chomp.downcase
 
-    command = command.sub(/^pick up/, 'get')
-    command = command.sub(/^put down/, 'drop')
-    command = command.sub(/^move/, 'go')
+    print "\n"
+
+    command = normalize_command(command)
 
     if command =~ /\s/
         cmd = command[0, command.index(' ')]
@@ -155,7 +210,10 @@ while true do
             puts 'Wh' + (cmd =~ /^(go|search)$/ ? 'ere' : 'at') + " do you want to #{cmd}?"
             next
         end
-    else
+    elsif cmd == 'unhold' and args
+        puts "Input error: command 'unhold' is used only by itself."
+        next
+#    else
 #        puts "'#{command}'"
     end # if command
 
@@ -191,11 +249,15 @@ while true do
                         puts "going to move through door"
                     end
                 else
-                    puts "You see no door here."
+                    puts "You start toward the wall but see no door to walk through."
                 end
             else
                 res = pc.move(direction)
-                puts "Invalid direction '#{direction}'." unless res
+                if res
+                    puts "You take a few steps to the #{direction}."
+                else
+                    puts "Invalid direction '#{direction}'."
+                end
             end
         when 'search'
             puts "going to search "
@@ -206,23 +268,38 @@ while true do
                 pc.inventory.each { |item|
                     puts "- " + item.name unless item.in_hand
                 }
+            else
+                puts "You have no items in your pack."
             end
         when 'hold'
             requested_item = args.join(' ')
-            found_item = nil
-            pc.inventory.each { |item|
-                if item.name == requested_item.sub(/^\s*/, '').sub(/\s*$/, '') or (requested_item.size >= 5 and item.index(arg))
-                    found_item = item
-                    break
-                end
-            }
+            found_item = pc.inventory_search(requested_item)
             if found_item
                 pc.inventory.each { |item|
                     item.in_hand = false
                 }
                 found_item.in_hand = true
+                puts "You are now holding #{found_item.indefinite}."
             else
-                puts "\nI couldn't find that item in your inventory."
+                puts "I couldn't find that item in your inventory."
+            end
+        when 'unhold'
+            if pc.holding
+                pc.holding.in_hand = false
+                puts "You stash the #{found_item.name} in your pack."
+            else
+                puts "You are not holding anything."
+            end
+        when 'drop'
+            requested_item = args.join(' ')
+            found_item = pc.inventory_search(requested_item)
+            if found_item
+                pc.inventory_remove(found_item)
+                found_item.position = pc.position
+                pc.location.items << found_item
+                puts "You set the #{found_item.name} beside you."
+            else
+                puts "I couldn't find that item in your inventory."
             end
         when 'help'
             puts HELP
@@ -231,9 +308,9 @@ while true do
         when ''
             next
         else
-            puts "\nI don't understand your command '#{command}'.\nEnter 'help' for help."
+            puts "I don't understand your command '#{command}'.\nEnter 'help' for help."
     end # case
 
 end # while
 
-puts "\nThe world melts around you, and you wake up from a weird dream!"
+puts "\nThe world melts around you as you wake up from a weird dream!"
