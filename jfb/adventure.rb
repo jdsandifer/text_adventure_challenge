@@ -10,9 +10,11 @@ class Room
         @doors = []
         @items = []
         @type = room_type
+        @ambient = (room_type == 'room' ? nil : 'dark and musty')
     end # initialize
 
     def describe
+        return "It is #{@ambient} in here." if @ambient
     end # describe
 
     def item_remove(item_in)
@@ -23,12 +25,19 @@ class Room
         @items = new_inv
     end
 
+    def find_door(type, position)
+        @doors.each { |door|
+            return door if door.type == type and door.position == position
+        }
+        return nil
+    end
+
 end
 
 class Door
 
     attr_accessor :position, :type, :visible, :locked
-    def initialize(position, type = 'normal', visible = true, locked = false)
+    def initialize(position, type = 'door', visible = true, locked = false)
         @visible = visible
         @position = position
         @type = type
@@ -61,29 +70,54 @@ class Player
 
     def move(direction)
         #binding.pry
-        unless direction =~ /^(north|south)?(east|west)?$/
-            return nil
-        end
-        if @position == 'middle'
-            @position = direction
+
+        if direction == 'up'
+            if @location.find_door('hole', 'ceiling')
+                puts "You jump and jump, as high as you can, but you cannot reach the edges\n" +
+                    "of the hole. If only you were 20 feet (6.096m) taller!"
+            elsif @location.find_door('trap', 'ceiling')
+                puts "You grab the chain hanging from the trap door and pull it but immediately\n" +
+                    "realize that this part of the universe has not yet been coded. What a world!"
+            else
+                puts "You see no way through the ceiling."
+            end
+            return -1
+        elsif direction == 'down'
+            if @location.find_door('hole', 'floor')
+                puts "You try to jump into the hole but immediately realize that this part of\n" +
+                    "the universe has not yet been coded. What a world!"
+            elsif @location.find_door('trap', 'floor')
+                puts "You push down on the trap door but immediately realize that this part of\n" +
+                    "the universe has not yet been coded. What a world!"
+            else
+                puts "You see no way through the floor."
+            end
+            return -1
+        elsif direction =~ /^(north|south)?(east|west)?$/
+            if @position == 'middle'
+                @position = direction
+            else
+                pos_ew = pos_ns = move_ew = move_ns = 0
+                newpos = ''
+                pos_ew = 1 if @position =~ /east/
+                pos_ew = -1 if @position =~ /west/
+                pos_ns = 1 if @position =~ /north/
+                pos_ns = -1 if @position =~ /south/
+                move_ew = 1 if direction =~ /east/
+                move_ew = -1 if direction =~ /west/
+                move_ns = 1 if direction =~ /north/
+                move_ns = -1 if direction =~ /south/
+                new_ns = pos_ns + move_ns
+                new_ew = pos_ew + move_ew
+                newpos = 'north' if new_ns == 1
+                newpos = 'south' if new_ns == -1
+                newpos += 'east' if new_ew == 1
+                newpos += 'west' if new_ew == -1
+                @position = (newpos == '' ? 'middle' : newpos)
+            end
+            return 1
         else
-            pos_ew = pos_ns = move_ew = move_ns = 0
-            newpos = ''
-            pos_ew = 1 if @position =~ /east/
-            pos_ew = -1 if @position =~ /west/
-            pos_ns = 1 if @position =~ /north/
-            pos_ns = -1 if @position =~ /south/
-            move_ew = 1 if direction =~ /east/
-            move_ew = -1 if direction =~ /west/
-            move_ns = 1 if direction =~ /north/
-            move_ns = -1 if direction =~ /south/
-            new_ns = pos_ns + move_ns
-            new_ew = pos_ew + move_ew
-            newpos = 'north' if new_ns == 1
-            newpos = 'south' if new_ns == -1
-            newpos += 'east' if new_ew == 1
-            newpos += 'west' if new_ew == -1
-            @position = (newpos == '' ? 'middle' : newpos)
+            return 0
         end
     end
 end
@@ -163,9 +197,9 @@ EOH
 rooms = []
 
 rooms[0] = Room.new
-rooms[0].doors << Door.new('east', 'normal', false)
+rooms[0].doors << Door.new('east', 'door', false)
 rooms[0].items << Item.new('tapestry', 'a', 'south')
-#rooms[0].items << Item.new('chisel', 'a', 'middle')
+rooms[0].items << Item.new('chisel', 'a', 'middle')
 rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
@@ -183,8 +217,7 @@ rooms[3] = Room.new
 
 #pc = Player.new(rooms[rand(rooms.size)])
 pc = Player.new(rooms[0])
-pc.inventory << Item.new('chisel', 'a', '')
-
+pc.location.doors << Door.new('ceiling', 'hole')
 
 puts <<-EOH
 You are walking through the basement of an abandoned building as you
@@ -200,7 +233,7 @@ EOH
 
 while true do
 
-    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n> "
+    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n#{pc.location.describe + "\n" if pc.location.describe}> "
 
     break unless command = gets
     command = command.chomp.downcase
@@ -247,6 +280,13 @@ while true do
                     end # if item.position
                 }
             end # if pc.location.items.size
+            if pc.location.doors.size > 0
+                puts "\n"
+                pc.location.doors.each { |door|
+                    puts "You see a #{door.type} " + (door.position =~ /^(ceiling|floor)$/ ? 'in' : 'on') +
+                        " the #{door.position}" + (door.position =~ /^(ceiling|floor)$/ ? '.' : " side of the room.")
+                }
+            end # if pc.location.doors.size
         when 'go'
             direction = args.shift
             if pc.position == direction
@@ -266,9 +306,9 @@ while true do
                 end
             else
                 res = pc.move(direction)
-                if res
+                if res > 0
                     puts "You take a few steps to the #{direction}."
-                else
+                elsif res == 0
                     puts "Invalid direction '#{direction}'."
                 end
             end
