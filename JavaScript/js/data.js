@@ -23,7 +23,7 @@ var rooms = {
       {
         objectName: 'book',
         objectDescription: 'An dusty old book that looks mysterious.',
-        addInventory: true,
+        canPickup: true,
       }
     ]
   },
@@ -39,7 +39,7 @@ var rooms = {
       {
         objectName: 'mushroom',
         objectDescription: 'Nasty smelling mushroom that looks uninteresting.',
-        addInventory: false,
+        canPickup: false,
       }
     ]
   },
