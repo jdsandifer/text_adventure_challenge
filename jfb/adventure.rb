@@ -12,12 +12,16 @@ class Room
         @type = room_type
     end # initialize
 
-#    def add_door(door_position, door_type = 'normal', door_visible = true, door_locked = false)
-#        @doors << Door.new(door_position, door_type, door_visible, door_locked)
-#    end # add_door
-
     def describe
     end # describe
+
+    def item_remove(item_in)
+        new_inv = []
+        @items.each { |item|
+            new_inv << item unless item == item_in
+        }
+        @items = new_inv
+    end
 
 end
 
@@ -43,15 +47,6 @@ class Player
     def holding
         @inventory.each { |item|
             return item if item.in_hand
-        }
-        return nil
-    end
-
-    def inventory_search(name)
-        @inventory.each { |item|
-            if item.name == name or (name.size >= 5 and item.name.index(name))
-                return item
-            end
         }
         return nil
     end
@@ -110,12 +105,17 @@ end
 def normalize_command(cmd)
     cmd = cmd.sub(/^\s+/, '').sub(/\s+$/, '')
     case
+        # straight-up substitutions
         when cmd.match(/^pick up/)
             return cmd.sub(/^pick up/, 'get')
         when cmd.match(/^put down/)
             return cmd.sub(/^put down/, 'drop')
         when cmd.match(/^move/)
             return cmd.sub(/^move/, 'go')
+        when cmd.match(/^(exit|bye)$/)
+            return 'quit'
+
+        # abbreviations
         when "inventory".index(cmd)
             return cmd.sub(/^i.*/, 'inventory')
         when "look".index(cmd)
@@ -129,6 +129,16 @@ def normalize_command(cmd)
     end
 end
 
+def item_search(items, name)
+    items.each { |item|
+        if item.name == name or (name.size >= 5 and item.name.index(name))
+            return item
+        end
+    }
+    return nil
+end
+
+
 HELP = <<-EOH
 Valid commands:
     l[ook]              view your surroundings
@@ -136,11 +146,13 @@ Valid commands:
     move <direction>    alias for 'go'
     search <direction>  locate hidden features
     get <object>        pick up an item
+    pick up <object>    alias for 'get'
     drop <object>       put down an item
+    put down <object>   alias for 'drop'
     h[old] <object>     ready an item for use, replacing held item (if any)
     u[nhold]            place held item in your pack
     i[nventory]         list items in your possession
-    quit                leave the game
+    quit, exit, bye     leave the game
 
 Valid directions: n[orth] s[outh] e[ast] w[est]
                   n[orth]w[est] n[orth]e[ast]
@@ -154,6 +166,7 @@ rooms[0] = Room.new
 rooms[0].doors << Door.new('east', 'normal', false)
 rooms[0].items << Item.new('tapestry', 'a', 'south')
 #rooms[0].items << Item.new('chisel', 'a', 'middle')
+rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
@@ -170,7 +183,7 @@ rooms[3] = Room.new
 
 #pc = Player.new(rooms[rand(rooms.size)])
 pc = Player.new(rooms[0])
-pc.inventory << Item.new('chisel', 'a', 'middle')
+pc.inventory << Item.new('chisel', 'a', '')
 
 
 puts <<-EOH
@@ -226,7 +239,7 @@ while true do
             else
                 puts "here:"
                 pc.location.items.each { |item|
-                    print "- a" + (item.name[0].match(/[aeiou]/) ? 'n' : '') + " #{item.name} "
+                    print "- #{item.indefinite} "
                     if item.position == pc.position
                         puts "beside you"
                     else
@@ -273,13 +286,18 @@ while true do
             end
         when 'hold'
             requested_item = args.join(' ')
-            found_item = pc.inventory_search(requested_item)
+            found_item = item_search(pc.inventory, requested_item)
             if found_item
-                pc.inventory.each { |item|
-                    item.in_hand = false
-                }
-                found_item.in_hand = true
-                puts "You are now holding #{found_item.indefinite}."
+                if found_item.in_hand
+                    puts "You are already holding your #{found_item.name}."
+                else
+                    pc.inventory.each { |item|
+                        puts "You stash the #{item.name} in your pack." if item.in_hand
+                        item.in_hand = false
+                    }
+                    found_item.in_hand = true
+                    puts "You are now holding #{found_item.indefinite}."
+                end
             else
                 puts "I couldn't find that item in your inventory."
             end
@@ -292,7 +310,7 @@ while true do
             end
         when 'drop'
             requested_item = args.join(' ')
-            found_item = pc.inventory_search(requested_item)
+            found_item = item_search(pc.inventory, requested_item)
             if found_item
                 pc.inventory_remove(found_item)
                 found_item.position = pc.position
@@ -300,6 +318,25 @@ while true do
                 puts "You set the #{found_item.name} beside you."
             else
                 puts "I couldn't find that item in your inventory."
+            end
+        when 'get'
+            requested_item = args.join(' ')
+            available_items = []
+            pc.location.items.each { |item|
+                available_items << item if item.position == pc.position
+            }
+            if available_items.size > 0
+                found_item = item_search(available_items, requested_item)
+                if found_item
+                    pc.location.item_remove(found_item)
+                    found_item.position = ''
+                    pc.inventory << found_item
+                    puts "You grab the #{found_item.name} and stash it in your pack."
+                else
+                    puts "You see no objects here matching that description."
+                end
+            else
+                puts "You see no objects here."
             end
         when 'help'
             puts HELP
