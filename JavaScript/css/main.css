@@ -1,0 +1,26 @@
+#container {
+  background: antiquewhite;
+  width: 360px;
+  margin: 100px auto;
+  border: 2px solid antiquewhite;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+input {
+  font-size: 18px;
+  background: bisque;
+  width: 100%;
+  padding: 13px 13px 13px 20px;
+  box-sizing: border-box;
+  color: black;
+  border: 3px solid bisque;
+}
+
+input:focus {
+  background: white;
+  border: 3px solid bisque;
+  outline: none;
+}
