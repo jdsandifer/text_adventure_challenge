@@ -33,12 +33,18 @@ class Door
 end
 
 class Player
-    attr_accessor :location, :position, :inventory, :holding
+    attr_accessor :location, :position, :inventory
     def initialize(location, position = 'middle')
         @location = location
         @position = position
-        @holding = ''
         @inventory = []
+    end
+
+    def holding
+        @inventory.each { |item|
+            return item if item.in_hand
+        }
+        return nil
     end
 
     def move(direction)
@@ -71,17 +77,23 @@ class Player
 end
 
 class Item
-    attr_accessor :name, :position
-    def initialize (name, position)
+    attr_accessor :name, :position, :in_hand
+    def initialize (name, article, position)
         @name = name
         @position = position
+        @indefinite_article = article
+        @in_hand = false
+    end
+
+    def indefinite
+        return @indefinite_article + " " + @name
     end
 end
 
 HELP = <<-EOH
 Valid commands:
     look                view your surroundings
-    go <direction>      move through a doorway
+    go <direction>      move around your environment
     search <direction>  locate hidden features
     get <object>        pick up an item
     drop <object>       put down an item
@@ -98,9 +110,9 @@ rooms = []
 
 rooms[0] = Room.new
 rooms[0].doors << Door.new('east')
-rooms[0].items << Item.new('tapestry', 'south')
-rooms[0].items << Item.new('chisel', 'middle')
-rooms[0].items << Item.new('stone', 'middle')
+rooms[0].items << Item.new('tapestry', 'a', 'south')
+rooms[0].items << Item.new('chisel', 'a', 'middle')
+rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
 rooms[1].doors << Door.new('west')
@@ -173,7 +185,7 @@ while true do
                     move_door = door if door.position == pc.position and door.visible
                 }
                 if move_door
-                    if move_door.locked and pc.holding != 'key'
+                    if move_door.locked and pc.holding.name != 'key'
                         puts "The #{direction} door is locked."
                     else
                         puts "going to move through door"
@@ -187,12 +199,39 @@ while true do
             end
         when 'search'
             puts "going to search "
+        when 'inventory'
+            puts "You are holding #{pc.holding.indefinite}." if pc.holding
+            if (pc.inventory.size > 0 and !pc.holding) or (pc.inventory.size > 1 and pc.holding)
+                puts "Items in pack:"
+                pc.inventory.each { |item|
+                    puts "- " + item.name unless item.in_hand
+                }
+            end
+        when 'hold'
+            requested_item = args.join(' ')
+            found_item = nil
+            pc.inventory.each { |item|
+                if item.name == requested_item.sub(/^\s*/, '').sub(/\s*$/, '') or (requested_item.size >= 5 and item.index(arg))
+                    found_item = item
+                    break
+                end
+            }
+            if found_item
+                pc.inventory.each { |item|
+                    item.in_hand = false
+                }
+                found_item.in_hand = true
+            else
+                puts "\nI couldn't find that item in your inventory."
+            end
         when 'help'
             puts HELP
         when 'quit'
             break
+        when ''
+            next
         else
-            puts "Unknown command '#{command}'. " + HELP unless command == ''
+            puts "\nI don't understand your command '#{command}'.\nEnter 'help' for help."
     end # case
 
 end # while
