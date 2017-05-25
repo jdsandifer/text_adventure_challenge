@@ -17,7 +17,8 @@
 
   Game perspective: you're a mouse in a human world.
 */
-$('#command-list').text(array);
+$('#command-list').text(array); // ** debugging feature **
+$('#playerHealth').text('health:' + player.health);  // ** debugging feature **
 $('#room').text(player.currentRoom);
 $('#description').text(rooms[player.currentRoom].description);
 
@@ -83,14 +84,14 @@ $('input#command').on('keypress', function(event) {
           break;
         case 'get':
           var object = "";
-          for (int i = 1; i < commands.length; i++) {
+          for (var i = 1; i < commands.length; i++) {
             object += commands[i];
           }
           object = object.trim();
           playerGet(object);
           break;
         case 'eat':
-          playerFunction-eat(commands[1]);
+          playerFunctionEat(commands[1]);
           break;
         case 'attack':
           // ** figure this out
@@ -126,33 +127,18 @@ function displayMessage(message,delay) {
 }
 
 function updateLocation(direction,room) {
-  //console.log('executing updateLocation()');
-  //console.log('entered direction: ' + direction); // 'west'
-  // get current room
-  var location = player.currentRoom;
-  //console.log('current player location: ' + location);
-  // loop through rooms to see if the current room is connected with the room
-  // in the desired direction
-  //console.log(rooms[location].directions); // my current room's directions`
-  //console.log(rooms[location].connected); // my current room's connected rooms
+  var location = player.currentRoom; // get player's current location
   for (i in rooms) {
-    //console.log(rooms[i]);
-    //console.log('rooms seen: ' + rooms[i].id);
     for (j in rooms[i].directions) {
       if (rooms[i].id == location) {
-        //console.log(rooms[i].connected[j] + ' is to the ' + rooms[i].directions[j]);
-        //console.log(direction == rooms[i].directions[j]);
-        if (direction == rooms[i].directions[j]) {
-          //console.log('player current location: ' + player.currentRoom);
-          //console.log('moving to ' + rooms[i].connected[j]);
-          player.currentRoom = rooms[i].connected[j];
-          //console.log('player new location: ' + player.currentRoom);
-          $('#room').text(player.currentRoom);
-          // display new room description
-          $('#description').text(rooms[player.currentRoom].description);
+        if (direction == rooms[i].directions[j]) { // if the entered direction matches the 'entered' room, move player into that room
+          player.currentRoom = rooms[i].connected[j]; // update player status (location)
+          $('#room').text(player.currentRoom); // ** debugging feature **
+          $('#description').text(rooms[player.currentRoom].description); // display new room description
           break;
         }
       } else {
+        // ** see https://github.com/CodeBytes-PDX/text_adventure_challenge/issues/1
         // ** figure out invalid direction routine
         //console.log('not a valid direction');
         //displayMessage('Not a valid direction',5000);
