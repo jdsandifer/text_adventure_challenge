@@ -1,5 +1,8 @@
 # text_adventure_challenge
-Build a text based adventure game!
+Build a text based adventure game! 
+
+Feel free to use this prompt to get you started
+
 You find yourself walking down a forest path there are birds chirping, trees are moving slowly in the wind. As you round a corner in path you see the opening to a cave . It is wet, covered with vines and moss little ferns are growing along the face of the cave wall. 
 
 Something stirs within you, pulling you toward the cave entrance. As you get near a strong gust of wind comes from within the cave. It is not musty as you would expect coming from within a cave, but it carries a crisp freshness to it and the sent of salt.
