@@ -1,11 +1,11 @@
 // possible inspiration: http://textadventures.co.uk/games/play/5zyoqrsugeopel3ffhz_vq
 
-var array = ['go','look','examine','get','attack','run','flee','use','ctrl+alt+del','inventory'];
+var array = ['go','look','examine','get','eat','attack','run','flee','use','ctrl+alt+del','inventory'];
 // player attributes
 var player = {
   health: 100,
   hunger: 0,
-  inventory: ['pocket knife','health snack bar'],
+  inventory: ['knife','snack'],
   currentRoom: 'room1',
   moves: 0,
 }
