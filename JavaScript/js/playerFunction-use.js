@@ -6,11 +6,7 @@
 // status update: this function works but we need to decide on the effect of using an action on the target object
 
 function playerFunctionUse(object,target) {
-  inInventory = player.inventory.some(function(v,i) { // figure out if the used object is in player's inventory
-    if (object === v) {
-      return true;
-    }
-  });
+  inInventory = inventoryFinder(object);
 
   if (inInventory) { // if used object is in your inventory, perform the action
     if (object && !target) { // action with object and no target

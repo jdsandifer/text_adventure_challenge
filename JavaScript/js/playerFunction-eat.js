@@ -1,11 +1,7 @@
 
 
 function playerFunctionEat(object) {
-  inInventory = player.inventory.some(function(v,i) { // figure out if the used object is in player's inventory
-    if (object === v) {
-      return true;
-    }
-  });
+  inInventory = inventoryFinder(object);
 
   if (inInventory) { // if item is in player's inventory
     var edible = false;
@@ -20,8 +16,7 @@ function playerFunctionEat(object) {
       var message = 'You eat the ' + object + '. You feel better.';
       player.health += edibles[i].healthBonus;
       $('#playerHealth').text('health:' + player.health);  // ** debugging feature **
-      // ** remove item from inventory
-      updateInventory('remove',object)
+      updateInventory('remove',object) // remove object from player's inventory
     } else { // object isn't edible
       var message = object + ' is not edible';
     }

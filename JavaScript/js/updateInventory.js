@@ -8,11 +8,7 @@ function updateInventory(action,item) {
 
   }
   if (action == 'remove') { // remove item from inventory
-    inInventory = player.inventory.some(function(v,i) { // figure out if the removed item is in player's inventory
-      if (item === v) {
-        return true;
-      }
-    });
+    inInventory = inventoryFinder(item);
 
     if (inInventory) { // remove item from player's inventory
       var index = player.inventory.indexOf(item);
