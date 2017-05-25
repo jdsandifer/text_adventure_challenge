@@ -10,6 +10,27 @@ var player = {
   moves: 0,
 }
 
+var edibles = {
+  cheese: {
+    id: 'cheese',
+    description: 'A chunk of yellow cheese (maybe cheddar?).',
+    edible: true,
+    healthBonus: 50,
+  },
+  snack: {
+    id: 'snack',
+    description: 'A health fruit and grain snack bar.',
+    edible: true,
+    healthBonus: 75,
+  },
+  knife: {
+    id: 'knife',
+    description: 'A small pocket knife',
+    edible: false,
+    healthBonus: 0,
+  }
+}
+
 var rooms = {
   room1: {
     id: 'room1',
