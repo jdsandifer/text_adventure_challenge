@@ -161,27 +161,27 @@ $('input#command').on('keypress', function(event) {
         switch (commands[1]) {
           case 'west':
           case 'w':
-            updatedPlayer('west');
+            updateLocation('west');
             break;
           case 'east':
           case 'e':
-            updatedPlayer('east');
+            updateLocation('east');
             break;
           case 'north':
           case 'n':
-            updatedPlayer('north');
+            updateLocation('north');
             break;
           case 'south':
           case 's':
-            updatedPlayer('south');
+            updateLocation('south');
             break;
           case 'up':
           case 'u':
-            updatedPlayer('up');
+            updateLocation('up');
             break;
           case 'down':
           case 'd':
-            updatedPlayer('down');
+            updateLocation('down');
             break;
           default:
             displayMessage('Go where?',5000);
@@ -242,8 +242,8 @@ function displayMessage(message,delay) {
   //});
 }
 
-function updatedPlayer(direction,room) {
-  //console.log('executing updatedPlayer()');
+function updateLocation(direction,room) {
+  //console.log('executing updateLocation()');
   //console.log('entered direction: ' + direction); // 'west'
   // get current room
   var location = player.currentRoom;
