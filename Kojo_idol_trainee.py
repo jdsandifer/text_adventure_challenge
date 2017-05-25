@@ -8,7 +8,7 @@ Enter 'quit' to break the loop and end the game.
 
 # Rooms
 
-rooms = {'outside':['north', 'vocal'], 'vocal':['north', 'rap'], 'rap':['east', 'dance'], 'dance':['south', 'acting'], 'acting':['south', 'outside']}
+rooms = {'entry':['north', 'vocal training'], 'vocal training':['north', 'rap training'], 'rap training':['east', 'dance training'], 'dance training':['south', 'acting training'], 'acting training':['south', 'entry']}
 
 ## I may come back to this later. It didn't work as I'd hoped
 # class Room():
@@ -42,7 +42,7 @@ def help():
 # Game loop
 
 ## This approach didn't work as I'd hoped.
-# outside = Room("north")
+# entry = Room("north")
 # vocal = Room("north")
 # rap = Room("east")
 # dance = Room("south")
@@ -50,13 +50,15 @@ def help():
 
 # initialize the trainee
 trainee = Person()
-trainee.location = 'outside'
+trainee.location = 'entry'
 while True:
-	direction = input("Where would you like to go? You are {} and there is a door in the {} wall.".format(trainee.location, rooms[trainee.location][0].upper())).lower()
+	direction = input("You are in the {} room and there is a door in the {} wall. Where would you like to go?: ".format(trainee.location.upper(), rooms[trainee.location][0].upper())).lower()
 	if direction == rooms[trainee.location][0]:
 		trainee.location = rooms[trainee.location][1]
+	elif direction == 'quit':
+		break
 	else:
-		print("You walk into a wall. You are {} and there is a door in the {} wall.".format(trainee.location, rooms[trainee.location].upper())).lower()
+		print("You walk into a wall. You are in the {} room and there is a door in the {} wall.".format(trainee.location.upper(), rooms[trainee.location][0].upper()))
 		# Make the values in the rooms dictionary a LIST of strings, instead of a string
 		# Add the destination room to the list of values in the rooms dictionary
 		# trainee.location = rooms[trainee.location][1]
