@@ -89,12 +89,15 @@ $('input#command').on('keypress', function(event) {
           object = object.trim();
           playerGet(object);
           break;
+        case 'eat':
+          playerFunction-eat(commands[1]);
+          break;
         case 'attack':
           // ** figure this out
           break;
         case 'use':
-          // ** figure this out
-          console.log('use');
+          console.log('use' + commands[1]);
+          playerFunctionUse(commands[1],commands[3]); // 'use knife on door' for example ('knife' and 'door' are passed in)
           break;
         case 'ctrl+alt+del':
           // ** restart the game
@@ -104,17 +107,6 @@ $('input#command').on('keypress', function(event) {
           displayMessage('I do not understand.',5000);
     }
     /*
-        // ** nothing special about examined object
-        //if (array[i] == 'examine' && ) {
-          // I see nothing special about the <object>
-        //}
-        // check if command is value
-        // check if second half of command is a directions
-
-
-            // confirm direction is valid
-            // else, display vague direction error message
-
         // <action> <object>
         // <action> <item> on <object>
     */
