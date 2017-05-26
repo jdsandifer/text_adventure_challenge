@@ -24,7 +24,13 @@ class Room
     end # initialize
 
     def describe
-        return "It is #{@ambient} in here." if @ambient
+        text = ''
+        text +=  "It is #{@ambient} in here.\n" if @ambient
+        if @type == 'passage'
+            text += "You can move only #{@directions.keys[0]} or #{@directions.keys[1]} in here.\n"
+        end
+        return nil if text == ''
+        return text.chomp
     end # describe
 
     def item_remove(item_in)
@@ -35,8 +41,9 @@ class Room
         @items = new_inv
     end
 
-    def find_door(type, position)
+    def find_door(type, position, visible = nil)
         @doors.each { |door|
+            next if visible != nil and door.visible != visible
             return door if door.type == type and door.position == position
         }
         return nil
@@ -86,9 +93,13 @@ class Player
             if @location.find_door('hole', 'ceiling')
                 puts "You jump and jump, as high as you can, but you cannot reach the edges\n" +
                     "of the hole. If only you were 20 feet (6.096m) taller!"
-            elsif @location.find_door('trapdoor', 'ceiling')
-                puts "You grab the chain hanging from the trap door and pull it but immediately\n" +
-                    "realize that this part of the universe has not yet been coded. What a world!"
+            elsif @location.find_door('trap door', 'ceiling', true)
+                if @position == 'middle'
+                    puts "You grab the chain hanging from the trap door and pull it but immediately\n" +
+                        "realize that this part of the universe has not yet been coded. What a world!"
+                else
+                    puts "Move to the middle of the room to access the trap door."
+                end
             else
                 puts "You see no way through the ceiling."
             end
@@ -97,9 +108,13 @@ class Player
             if @location.find_door('hole', 'floor')
                 puts "You try to jump into the hole but immediately realize that this part of\n" +
                     "the universe has not yet been coded. What a world!"
-            elsif @location.find_door('trapdoor', 'floor')
-                puts "You push down on the trap door but immediately realize that this part of\n" +
-                    "the universe has not yet been coded. What a world!"
+            elsif @location.find_door('trap door', 'floor', true)
+                if @position == 'middle'
+                    puts "You push down on the trap door but immediately realize that this part of\n" +
+                        "the universe has not yet been coded. What a world!"
+                else
+                    puts "Move to the middle of the room to access the trap door."
+                end
             else
                 puts "You see no way through the floor."
             end
@@ -145,6 +160,15 @@ class Item
     def indefinite
         return @indefinite_article + " " + @name
     end
+end
+
+def die_roll(dice, sides)
+    roll = 0
+    (1..dice).each {
+        subroll = rand(sides)+1
+        roll += subroll
+    }
+    return roll
 end
 
 def normalize_command(cmd)
@@ -229,7 +253,7 @@ door_room1_room0.room = rooms[1]
 door_room1_room0.to_door = Door.new('northeast') # passage side of the door
 door_room1_room0.to_door.to_door = door_room1_room0
 rooms[1].doors << door_room1_room0
-rooms[1].doors << Door.new('floor', 'trapdoor', false)
+rooms[1].doors << Door.new('floor', 'trap door', false)
 
 door_room0_room1.to_door.room = rooms[2]
 rooms[2].doors << door_room0_room1.to_door
@@ -258,7 +282,7 @@ EOH
 
 while true do
 
-    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n#{pc.location.describe + "\n" if pc.location.describe}> "
+    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n#{(pc.location.describe + "\n") if pc.location.describe}> "
 
     break unless command = gets
     command = command.chomp.downcase
@@ -300,15 +324,17 @@ while true do
                     if item.position == pc.position
                         puts "beside you"
                     else
-                        puts "in the " + item.position + " of the room"
+                        puts "in the " + item.position + " of the #{pc.location.type}"
                     end # if item.position
                 }
             end # if pc.location.items.size
             if pc.location.doors.size > 0
                 puts "\n"
                 pc.location.doors.each { |door|
+                    next unless door.visible
+                    side = pc.location.type == 'room' ? 'side' : 'end'
                     puts "You see a #{door.type} " + (door.position =~ /^(ceiling|floor)$/ ? 'in' : 'on') +
-                        " the #{door.position}" + (door.position =~ /^(ceiling|floor)$/ ? '.' : " side of the room.")
+                        " the #{door.position}" + (door.position =~ /^(ceiling|floor)$/ ? '.' : " #{side} of the #{pc.location.type}.")
                 }
             end # if pc.location.doors.size
         when 'go'
@@ -345,7 +371,28 @@ while true do
                 end
             end
         when 'search'
-            puts "going to search "
+            puts "You feel around in the dust and dirt that seems to cover every surface here."
+            uncovered = nil
+            pc.location.doors.each { |door|
+                if (door.position == pc.position or
+                        (door.position =~ /^(floor|ceiling)/) and
+                        pc.position == 'middle') and
+                        ! door.visible and die_roll(5, 12) < 50
+                    door.visible = true
+                    door.to_door.visible = true if door.to_door
+                    uncovered = door
+                    break
+                end
+            }
+            if uncovered
+                print "You find a #{uncovered.type} in the #{uncovered.position}"
+                if uncovered.type == 'door'
+                    print ' wall'
+                end
+                puts "!"
+            else
+                puts "After a few minutes of fruitless searching, you give up."
+            end
         when 'inventory'
             puts "You are holding #{pc.holding.indefinite}." if pc.holding
             if (pc.inventory.size > 0 and !pc.holding) or (pc.inventory.size > 1 and pc.holding)
