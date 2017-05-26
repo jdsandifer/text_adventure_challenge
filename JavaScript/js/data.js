@@ -51,7 +51,7 @@ var rooms = {
   room2: {
     id: 'room2',
     name: 'Kitchen',
-    description: 'Messy kitchen with mushrooms growing the dark corners.',
+    description: 'Messy kitchen with mold growing the dark corners.',
     deepDesc: '',
     directions: ['north','south'],
     connected: ['room1', 'room4', 'room5'],
@@ -68,8 +68,8 @@ var rooms = {
     id: 'room3',
     description: '...room 3 description...',
     deepDesc: '...',
-    directions: ['east','north'],
-    connected: ['room1', 'room4'],
+    directions: ['east','north','west'],
+    connected: ['room1', 'room4','room6'],
     secret: '',
     objects: [ ]
   },
@@ -118,12 +118,12 @@ for (var key in rooms) {
 
 /* crude first room map
 
-**4-------**
-**|******|**
-**|******|**
-**3--1--2-**
-********|***
-********5***
+****4-------**
+****|******|**
+****|******|**
+*6--3--1--2-**
+**********|***
+**********5***
 
 room 1: go east to room 2 or west to room 3
 room 2: go east to room 1 or east (turns north) to room 4
