@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'pry'
+require 'readline'
 
 class Room
 
@@ -43,8 +44,13 @@ class Room
 
     def find_door(type, position, visible = nil)
         @doors.each { |door|
+
+            # if visibility was specified, only doors with that visibility can match.
             next if visible != nil and door.visible != visible
-            return door if door.type == type and door.position == position
+
+            # visibility matched the specified value or was not specified; return
+            # the door if it is at the specified position.
+            return door if door.type == type and door.position.match(/#{position}/)
         }
         return nil
     end
@@ -213,7 +219,7 @@ Valid commands:
     l[ook]              view your surroundings
     go <direction>      move around your environment
     move <direction>    alias for 'go'
-    search <direction>  locate hidden features
+    search              locate hidden features
     get <object>        pick up an item
     pick up <object>    alias for 'get'
     drop <object>       put down an item
@@ -253,7 +259,7 @@ door_room1_room0.room = rooms[1]
 door_room1_room0.to_door = Door.new('northeast') # passage side of the door
 door_room1_room0.to_door.to_door = door_room1_room0
 rooms[1].doors << door_room1_room0
-rooms[1].doors << Door.new('floor', 'trap door', false)
+rooms[1].doors << Door.new('ceiling', 'trap door', false)
 
 door_room0_room1.to_door.room = rooms[2]
 rooms[2].doors << door_room0_room1.to_door
@@ -282,14 +288,16 @@ EOH
 
 while true do
 
-    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n#{(pc.location.describe + "\n") if pc.location.describe}> "
+    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n#{(pc.location.describe + "\n") if pc.location.describe}"
+    command = Readline::readline('> ')
+    break if command.nil?
+    command = normalize_command(command)
+    Readline::HISTORY.push(command) if Readline::HISTORY.length == 0 or
+                                       Readline::HISTORY[Readline::HISTORY.length-1] != command
 
-    break unless command = gets
-    command = command.chomp.downcase
+    command = command.downcase
 
     print "\n"
-
-    command = normalize_command(command)
 
     if command =~ /\s/
         cmd = command[0, command.index(' ')]
@@ -300,9 +308,9 @@ while true do
         args = nil
     end
 
-    if cmd =~ /^(go|search|get|drop|hold)\s*$/
+    if cmd =~ /^(go|get|drop|hold)\s*$/
         if ! args
-            puts 'Wh' + (cmd =~ /^(go|search)$/ ? 'ere' : 'at') + " do you want to #{cmd}?"
+            puts 'Wh' + (cmd == 'go' ? 'ere' : 'at') + " do you want to #{cmd}?"
             next
         end
     elsif cmd == 'unhold' and args
@@ -372,24 +380,19 @@ while true do
             end
         when 'search'
             puts "You feel around in the dust and dirt that seems to cover every surface here."
-            uncovered = nil
-            pc.location.doors.each { |door|
-                if (door.position == pc.position or
-                        (door.position =~ /^(floor|ceiling)/) and
-                        pc.position == 'middle') and
-                        ! door.visible and die_roll(5, 12) < 50
-                    door.visible = true
-                    door.to_door.visible = true if door.to_door
-                    uncovered = door
-                    break
+            uncovered = pc.location.find_door(pc.position == 'middle' ? 'trap door' : 'door',
+                                              pc.position == 'middle' ? 'floor|ceiling' : pc.position,
+                                              false)
+            if uncovered and die_roll(5, 12) <= 50
+                if uncovered.position == 'ceiling'
+                    puts "A cloud of dust hits you in the face. Yecch." if die_roll(4, 8) < 30
+                    puts "You knock a slim chain loose from the ceiling!"
                 end
-            }
-            if uncovered
                 print "You find a #{uncovered.type} in the #{uncovered.position}"
-                if uncovered.type == 'door'
-                    print ' wall'
-                end
+                print ' wall' if uncovered.type == 'door'
                 puts "!"
+                uncovered.visible = true
+                uncovered.to_door.visible = true if uncovered.to_door
             else
                 puts "After a few minutes of fruitless searching, you give up."
             end
