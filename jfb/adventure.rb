@@ -4,13 +4,23 @@ require 'pry'
 
 class Room
 
-    attr_accessor :doors, :type, :items
+    attr_accessor :doors, :type, :items, :directions
 
     def initialize(room_type = 'room')
         @doors = []
         @items = []
         @type = room_type
         @ambient = (room_type == 'room' ? nil : 'dark and musty')
+        @directions = {
+            'north' => 1,
+            'south' => 1,
+            'east' => 1,
+            'west' => 1,
+            'northeast' => 1,
+            'northwest' => 1,
+            'southeast' => 1,
+            'southwest' => 1,
+        }
     end # initialize
 
     def describe
@@ -36,11 +46,13 @@ end
 
 class Door
 
-    attr_accessor :position, :type, :visible, :locked
+    attr_accessor :position, :type, :visible, :locked, :to_door, :room
     def initialize(position, type = 'door', visible = true, locked = false)
         @visible = visible
         @position = position
         @type = type
+        @to_door = nil
+        @room = nil
     end # initialize
 
 end
@@ -69,13 +81,12 @@ class Player
     end
 
     def move(direction)
-        #binding.pry
 
         if direction == 'up'
             if @location.find_door('hole', 'ceiling')
                 puts "You jump and jump, as high as you can, but you cannot reach the edges\n" +
                     "of the hole. If only you were 20 feet (6.096m) taller!"
-            elsif @location.find_door('trap', 'ceiling')
+            elsif @location.find_door('trapdoor', 'ceiling')
                 puts "You grab the chain hanging from the trap door and pull it but immediately\n" +
                     "realize that this part of the universe has not yet been coded. What a world!"
             else
@@ -86,7 +97,7 @@ class Player
             if @location.find_door('hole', 'floor')
                 puts "You try to jump into the hole but immediately realize that this part of\n" +
                     "the universe has not yet been coded. What a world!"
-            elsif @location.find_door('trap', 'floor')
+            elsif @location.find_door('trapdoor', 'floor')
                 puts "You push down on the trap door but immediately realize that this part of\n" +
                     "the universe has not yet been coded. What a world!"
             else
@@ -94,9 +105,7 @@ class Player
             end
             return -1
         elsif direction =~ /^(north|south)?(east|west)?$/
-            if @position == 'middle'
-                @position = direction
-            else
+            if @location.directions[direction]
                 pos_ew = pos_ns = move_ew = move_ns = 0
                 newpos = ''
                 pos_ew = 1 if @position =~ /east/
@@ -114,11 +123,13 @@ class Player
                 newpos += 'east' if new_ew == 1
                 newpos += 'west' if new_ew == -1
                 @position = (newpos == '' ? 'middle' : newpos)
+                return 1
+            else
+                puts "You see only a wall to the #{direction}."
+                return -1
             end
-            return 1
-        else
-            return 0
         end
+        return 0
     end
 end
 
@@ -197,19 +208,30 @@ EOH
 rooms = []
 
 rooms[0] = Room.new
-rooms[0].doors << Door.new('east', 'door', false)
+door_room0_room1 = Door.new('east')
+door_room0_room1.room = rooms[0]
+door_room0_room1.to_door = Door.new('southwest')
+door_room0_room1.to_door.to_door = door_room0_room1
+rooms[0].doors << door_room0_room1
 rooms[0].items << Item.new('tapestry', 'a', 'south')
 rooms[0].items << Item.new('chisel', 'a', 'middle')
 rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
-rooms[1].doors << Door.new('west')
-rooms[1].doors << Door.new('floor', 'trap', false)
+door_room1_room0 = Door.new('west')
+door_room1_room0.room = rooms[1]
+door_room1_room0.to_door = Door.new('northeast')
+door_room1_room0.to_door.to_door = door_room1_room0
+rooms[1].doors << Door.new('floor', 'trapdoor', false)
 
 rooms[2] = Room.new('passage')
-rooms[2].doors << rooms[0].doors[0]
-rooms[2].doors << rooms[1].doors[0]
+rooms[2].directions = {'southwest' => 1, 'northeast' => 1}
+
+door_room0_room1.to_door.room = rooms[2]
+rooms[2].doors << door_room0_room1.to_door
+door_room1_room0.to_door.room = rooms[2]
+rooms[2].doors << door_room1_room0.to_door
 
 rooms[3] = Room.new
 
@@ -263,7 +285,6 @@ while true do
 #        puts "'#{command}'"
     end # if command
 
-#binding.pry
     case cmd
         when 'look'
             print "You see "
@@ -299,7 +320,15 @@ while true do
                     if move_door.locked and pc.holding.name != 'key'
                         puts "The #{direction} door is locked."
                     else
-                        puts "going to move through door"
+                        if move_door.locked and pc.holding.name == 'key'
+                            puts "You unlock the door and walk through it."
+                            move_door.locked = false
+                            move_door.to_door.locked = false
+                        else
+                            puts "You open the door and walk through."
+                            pc.location = move_door.to_door.room
+                            pc.position = move_door.to_door.position
+                        end
                     end
                 else
                     puts "You start toward the wall but see no door to walk through."
