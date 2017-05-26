@@ -90,6 +90,7 @@ class Player
         @inventory.each { |item|
             new_inv << item unless item == drop_item
         }
+        drop_item.in_hand = false
         @inventory = new_inv
     end
 
@@ -127,6 +128,7 @@ class Player
             return -1
         elsif direction =~ /^(north|south)?(east|west)?$/
             if @location.directions[direction]
+                # the whole position/direction system needs some big-time refactoring
                 pos_ew = pos_ns = move_ew = move_ns = 0
                 newpos = ''
                 pos_ew = 1 if @position =~ /east/
@@ -259,20 +261,20 @@ door_room1_room0.room = rooms[1]
 door_room1_room0.to_door = Door.new('northeast') # passage side of the door
 door_room1_room0.to_door.to_door = door_room1_room0
 rooms[1].doors << door_room1_room0
-rooms[1].doors << Door.new('ceiling', 'trap door', false)
 
 door_room0_room1.to_door.room = rooms[2]
 rooms[2].doors << door_room0_room1.to_door
 door_room1_room0.to_door.room = rooms[2]
 rooms[2].doors << door_room1_room0.to_door
 
-rooms[3] = Room.new
+#rooms[3] = Room.new
 
 #puts rooms.inspect
 
-#pc = Player.new(rooms[rand(rooms.size)])
-pc = Player.new(rooms[0])
+pc = Player.new(rooms[rand(rooms.size)])
 pc.location.doors << Door.new('ceiling', 'hole')
+
+rooms[1].doors << Door.new('ceiling', 'trap door', false) unless rooms[1].find_door('hole', 'ceiling')
 
 puts <<-EOH
 You are walking through the basement of an abandoned building as you
@@ -437,7 +439,7 @@ while true do
                 pc.inventory_remove(found_item)
                 found_item.position = pc.position
                 pc.location.items << found_item
-                puts "You set the #{found_item.name} beside you."
+                puts "You set the #{found_item.name} down beside you."
             else
                 puts "I couldn't find that item in your inventory."
             end
