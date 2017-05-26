@@ -208,25 +208,28 @@ EOH
 rooms = []
 
 rooms[0] = Room.new
-door_room0_room1 = Door.new('east')
-door_room0_room1.room = rooms[0]
-door_room0_room1.to_door = Door.new('southwest')
-door_room0_room1.to_door.to_door = door_room0_room1
-rooms[0].doors << door_room0_room1
 rooms[0].items << Item.new('tapestry', 'a', 'south')
 rooms[0].items << Item.new('chisel', 'a', 'middle')
 rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
-door_room1_room0 = Door.new('west')
-door_room1_room0.room = rooms[1]
-door_room1_room0.to_door = Door.new('northeast')
-door_room1_room0.to_door.to_door = door_room1_room0
-rooms[1].doors << Door.new('floor', 'trapdoor', false)
 
 rooms[2] = Room.new('passage')
 rooms[2].directions = {'southwest' => 1, 'northeast' => 1}
+
+door_room0_room1 = Door.new('east')
+door_room0_room1.room = rooms[0]
+door_room0_room1.to_door = Door.new('southwest') # passage side of the door
+door_room0_room1.to_door.to_door = door_room0_room1
+rooms[0].doors << door_room0_room1
+
+door_room1_room0 = Door.new('west')
+door_room1_room0.room = rooms[1]
+door_room1_room0.to_door = Door.new('northeast') # passage side of the door
+door_room1_room0.to_door.to_door = door_room1_room0
+rooms[1].doors << door_room1_room0
+rooms[1].doors << Door.new('floor', 'trapdoor', false)
 
 door_room0_room1.to_door.room = rooms[2]
 rooms[2].doors << door_room0_room1.to_door
