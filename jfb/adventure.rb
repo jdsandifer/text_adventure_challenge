@@ -4,15 +4,27 @@ require 'pry'
 
 class Room
 
-    attr_accessor :doors, :type, :items
+    attr_accessor :doors, :type, :items, :directions
 
     def initialize(room_type = 'room')
         @doors = []
         @items = []
         @type = room_type
+        @ambient = (room_type == 'room' ? nil : 'dark and musty')
+        @directions = {
+            'north' => 1,
+            'south' => 1,
+            'east' => 1,
+            'west' => 1,
+            'northeast' => 1,
+            'northwest' => 1,
+            'southeast' => 1,
+            'southwest' => 1,
+        }
     end # initialize
 
     def describe
+        return "It is #{@ambient} in here." if @ambient
     end # describe
 
     def item_remove(item_in)
@@ -23,15 +35,24 @@ class Room
         @items = new_inv
     end
 
+    def find_door(type, position)
+        @doors.each { |door|
+            return door if door.type == type and door.position == position
+        }
+        return nil
+    end
+
 end
 
 class Door
 
-    attr_accessor :position, :type, :visible, :locked
-    def initialize(position, type = 'normal', visible = true, locked = false)
+    attr_accessor :position, :type, :visible, :locked, :to_door, :room
+    def initialize(position, type = 'door', visible = true, locked = false)
         @visible = visible
         @position = position
         @type = type
+        @to_door = nil
+        @room = nil
     end # initialize
 
 end
@@ -60,31 +81,55 @@ class Player
     end
 
     def move(direction)
-        #binding.pry
-        unless direction =~ /^(north|south)?(east|west)?$/
-            return nil
+
+        if direction == 'up'
+            if @location.find_door('hole', 'ceiling')
+                puts "You jump and jump, as high as you can, but you cannot reach the edges\n" +
+                    "of the hole. If only you were 20 feet (6.096m) taller!"
+            elsif @location.find_door('trapdoor', 'ceiling')
+                puts "You grab the chain hanging from the trap door and pull it but immediately\n" +
+                    "realize that this part of the universe has not yet been coded. What a world!"
+            else
+                puts "You see no way through the ceiling."
+            end
+            return -1
+        elsif direction == 'down'
+            if @location.find_door('hole', 'floor')
+                puts "You try to jump into the hole but immediately realize that this part of\n" +
+                    "the universe has not yet been coded. What a world!"
+            elsif @location.find_door('trapdoor', 'floor')
+                puts "You push down on the trap door but immediately realize that this part of\n" +
+                    "the universe has not yet been coded. What a world!"
+            else
+                puts "You see no way through the floor."
+            end
+            return -1
+        elsif direction =~ /^(north|south)?(east|west)?$/
+            if @location.directions[direction]
+                pos_ew = pos_ns = move_ew = move_ns = 0
+                newpos = ''
+                pos_ew = 1 if @position =~ /east/
+                pos_ew = -1 if @position =~ /west/
+                pos_ns = 1 if @position =~ /north/
+                pos_ns = -1 if @position =~ /south/
+                move_ew = 1 if direction =~ /east/
+                move_ew = -1 if direction =~ /west/
+                move_ns = 1 if direction =~ /north/
+                move_ns = -1 if direction =~ /south/
+                new_ns = pos_ns + move_ns
+                new_ew = pos_ew + move_ew
+                newpos = 'north' if new_ns == 1
+                newpos = 'south' if new_ns == -1
+                newpos += 'east' if new_ew == 1
+                newpos += 'west' if new_ew == -1
+                @position = (newpos == '' ? 'middle' : newpos)
+                return 1
+            else
+                puts "You see only a wall to the #{direction}."
+                return -1
+            end
         end
-        if @position == 'middle'
-            @position = direction
-        else
-            pos_ew = pos_ns = move_ew = move_ns = 0
-            newpos = ''
-            pos_ew = 1 if @position =~ /east/
-            pos_ew = -1 if @position =~ /west/
-            pos_ns = 1 if @position =~ /north/
-            pos_ns = -1 if @position =~ /south/
-            move_ew = 1 if direction =~ /east/
-            move_ew = -1 if direction =~ /west/
-            move_ns = 1 if direction =~ /north/
-            move_ns = -1 if direction =~ /south/
-            new_ns = pos_ns + move_ns
-            new_ew = pos_ew + move_ew
-            newpos = 'north' if new_ns == 1
-            newpos = 'south' if new_ns == -1
-            newpos += 'east' if new_ew == 1
-            newpos += 'west' if new_ew == -1
-            @position = (newpos == '' ? 'middle' : newpos)
-        end
+        return 0
     end
 end
 
@@ -163,19 +208,30 @@ EOH
 rooms = []
 
 rooms[0] = Room.new
-rooms[0].doors << Door.new('east', 'normal', false)
+door_room0_room1 = Door.new('east')
+door_room0_room1.room = rooms[0]
+door_room0_room1.to_door = Door.new('southwest')
+door_room0_room1.to_door.to_door = door_room0_room1
+rooms[0].doors << door_room0_room1
 rooms[0].items << Item.new('tapestry', 'a', 'south')
-#rooms[0].items << Item.new('chisel', 'a', 'middle')
+rooms[0].items << Item.new('chisel', 'a', 'middle')
 rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
-rooms[1].doors << Door.new('west')
-rooms[1].doors << Door.new('floor', 'trap', false)
+door_room1_room0 = Door.new('west')
+door_room1_room0.room = rooms[1]
+door_room1_room0.to_door = Door.new('northeast')
+door_room1_room0.to_door.to_door = door_room1_room0
+rooms[1].doors << Door.new('floor', 'trapdoor', false)
 
 rooms[2] = Room.new('passage')
-rooms[2].doors << rooms[0].doors[0]
-rooms[2].doors << rooms[1].doors[0]
+rooms[2].directions = {'southwest' => 1, 'northeast' => 1}
+
+door_room0_room1.to_door.room = rooms[2]
+rooms[2].doors << door_room0_room1.to_door
+door_room1_room0.to_door.room = rooms[2]
+rooms[2].doors << door_room1_room0.to_door
 
 rooms[3] = Room.new
 
@@ -183,8 +239,7 @@ rooms[3] = Room.new
 
 #pc = Player.new(rooms[rand(rooms.size)])
 pc = Player.new(rooms[0])
-pc.inventory << Item.new('chisel', 'a', '')
-
+pc.location.doors << Door.new('ceiling', 'hole')
 
 puts <<-EOH
 You are walking through the basement of an abandoned building as you
@@ -200,7 +255,7 @@ EOH
 
 while true do
 
-    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n> "
+    print "\nYou are in the #{pc.position} of a #{pc.location.type}.\n#{pc.location.describe + "\n" if pc.location.describe}> "
 
     break unless command = gets
     command = command.chomp.downcase
@@ -230,7 +285,6 @@ while true do
 #        puts "'#{command}'"
     end # if command
 
-#binding.pry
     case cmd
         when 'look'
             print "You see "
@@ -247,6 +301,13 @@ while true do
                     end # if item.position
                 }
             end # if pc.location.items.size
+            if pc.location.doors.size > 0
+                puts "\n"
+                pc.location.doors.each { |door|
+                    puts "You see a #{door.type} " + (door.position =~ /^(ceiling|floor)$/ ? 'in' : 'on') +
+                        " the #{door.position}" + (door.position =~ /^(ceiling|floor)$/ ? '.' : " side of the room.")
+                }
+            end # if pc.location.doors.size
         when 'go'
             direction = args.shift
             if pc.position == direction
@@ -259,16 +320,24 @@ while true do
                     if move_door.locked and pc.holding.name != 'key'
                         puts "The #{direction} door is locked."
                     else
-                        puts "going to move through door"
+                        if move_door.locked and pc.holding.name == 'key'
+                            puts "You unlock the door and walk through it."
+                            move_door.locked = false
+                            move_door.to_door.locked = false
+                        else
+                            puts "You open the door and walk through."
+                            pc.location = move_door.to_door.room
+                            pc.position = move_door.to_door.position
+                        end
                     end
                 else
                     puts "You start toward the wall but see no door to walk through."
                 end
             else
                 res = pc.move(direction)
-                if res
+                if res > 0
                     puts "You take a few steps to the #{direction}."
-                else
+                elsif res == 0
                     puts "Invalid direction '#{direction}'."
                 end
             end
