@@ -17,6 +17,7 @@ General notes about every room:
 * Every room should have a short and long description. The short description is shown by default upon entrance of a room
 * The room's long description is revealed once the player executes 'examine room' command.
 * Each room opens with the short description followed by directions.
+* Picking up objects in a room should go like this: 'get <(noun) object>'. For example, if the player sees the wooden snake toy, he'd have to command, 'get toy'.
 
 
 Room 1: Study

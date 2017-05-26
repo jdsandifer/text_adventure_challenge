@@ -36,14 +36,15 @@ var rooms = {
     id: 'room1',
     name: 'Study room',
     description: 'Large study with lots dusty old of books. To the east, you see an open door and to the west an hallway.',
-    deepDesc: '',
+    deepDesc: 'deeper description of room 1.',
     directions: ['east','west'],
     connected: ['room2', 'room3'],
+    inventory: ['book'],
     secret: 'none',
     objects: [
       {
         objectName: 'book',
-        objectDescription: 'An dusty old book that looks mysterious.',
+        objectDescription: 'An dusty old cook book that looks like its from the 1950s.',
         canPickup: true,
       }
     ]
@@ -52,69 +53,67 @@ var rooms = {
     id: 'room2',
     name: 'Kitchen',
     description: 'Messy kitchen with mold growing the dark corners.',
-    deepDesc: '',
+    deepDesc: 'deeper description of room 2.',
     directions: ['north','south'],
     connected: ['room1', 'room4', 'room5'],
+    inventory: ['toy'],
     secret: 'none',
     objects: [
       {
-        objectName: 'mushroom',
+        objectId: 'mushroom',
+        objectName: 'smelly brown mushroom',
         objectDescription: 'Nasty smelling mushroom that looks uninteresting.',
         canPickup: false,
+      },
+      {
+        objectId: 'toy',
+        objectName: 'wooden snake toy',
+        objectDescription: 'Nasty smelling mushroom that looks uninteresting.',
+        canPickup: true,
       }
     ]
   },
   room3: {
     id: 'room3',
     description: '...room 3 description...',
-    deepDesc: '...',
+    deepDesc: 'deeper description of room 3.',
     directions: ['east','north','west'],
     connected: ['room1', 'room4','room6'],
+    inventory: [],
     secret: '',
     objects: [ ]
   },
   room4: {
     id: 'room4',
     description: '...room 4 description...',
-    deepDesc: '',
+    deepDesc: 'deeper description of room 4',
     directions: ['south','east'],
     connected: ['room3','room2'],
+    inventory: [],
+    secret: '',
+    objects: [ ]
+  },
+  room5: {
+    id: 'room5',
+    description: '...room 5 description... This room is a trap. Player loses the knife and the room picks it up.',
+    deepDesc: 'deeper description of room 5',
+    directions: ['north'],
+    connected: ['room2'],
+    inventory: [],
+    secret: '',
+    objects: [ ]
+  },
+  room6: {
+    id: 'room6',
+    description: '...room 6 description...',
+    deepDesc: 'deeper description of room 6',
+    directions: ['east'],
+    connected: ['room3'],
+    inventory: [],
     secret: '',
     objects: [ ]
   }
-  /*
-  room2: {
-    id: 'room2',
-    description: '',
-    deepDesc: '',
-    directions: [],
-    connected: [],
-    secret: '',
-    objects: [
-      {
-        objectName: '',
-        objectDescription: '',
-        addInventory: false,
-      }
-    ]
-  }
-  */
 }
-
-/* testing object crawling
-for (var key in rooms) {
-  //console.log(key.description);
-  for (var obj in rooms[key]) {
-    console.log(obj);
-    if (obj == 'name') {
-      console.log(rooms[key].name); //'Study room'
-    }
-    if (obj == 'directions') {
-      console.log(rooms[key].directions); // '(2) ["east", "west"]'
-    }
-  }
-}
-*/
 
 /* crude first room map
 

@@ -21,6 +21,7 @@ $('#command-list').text(array); // ** debugging feature **
 $('#playerHealth').text('health:' + player.health);  // ** debugging feature **
 $('#room').text(player.currentRoom);
 $('#description').text(rooms[player.currentRoom].description);
+focusInput(); // place focus on input field
 
 $('input#command').on('keypress', function(event) {
   if (event.which == 13) { // upon pressing the enter key, read command and decide if input is actionable
@@ -29,6 +30,7 @@ $('input#command').on('keypress', function(event) {
     var commands = command.split(/\s+/);
     //console.log(commands, typeof(commands));
     console.log(command); // 'go west'
+    focusInput(); // refocus on input field
     switch(commands[0]) {
       case 'inventory':
         //console.log('listing inventory');
@@ -76,10 +78,23 @@ $('input#command').on('keypress', function(event) {
         }
 
         break;
-        case 'examine':
+        // ** should we merge look and examine commands? **
+        case 'look': // provide short description
+          if (commands[1] == 'at' && commands[2] == 'room') { // 'look at room'
+            for (i in rooms) {
+              if (rooms[i].id == player.currentRoom) { // display short description of current rooms
+                displayDescription(rooms[i].description);
+              }
+            }
+          }
+          break;
+        case 'examine': // provide detailed description
           if (commands[1] == 'room') {
-            // examine room
-            // ** display deeper description of room which includes actionable objects (if any)
+            for (i in rooms) {
+              if (rooms[i].id == player.currentRoom) { // display short description of current rooms
+                displayDescription(rooms[i].deepDesc);
+              }
+            }
           }
           break;
         case 'get':
@@ -115,6 +130,10 @@ $('input#command').on('keypress', function(event) {
   }
 });
 
+function displayDescription(room) { // show room description
+  $('#description').show().html(room);
+}
+
 function displayMessage(message,delay) {
   // ** redo this function
   // clear #message
@@ -145,4 +164,8 @@ function updateLocation(direction,room) {
       }
     }
   }
+}
+
+function focusInput() { // place focus on input field
+  $('input').focus();
 }
