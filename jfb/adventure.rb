@@ -3,6 +3,38 @@
 require 'pry'
 require 'readline'
 
+HELP = <<-EOH
+Valid commands:
+    l[ook]              view your surroundings
+    go <direction>      move around your environment
+    move <direction>    alias for 'go'
+    s[earch]            locate hidden features
+    get <object>        pick up an item
+    pick up <object>    alias for 'get'
+    drop <object>       put down an item
+    put down <object>   alias for 'drop'
+    h[old] <object>     ready an item for use, replacing held item (if any)
+    u[nhold]            place held item in your pack
+    i[nventory]         list items in your possession
+    quit, exit, bye     leave the game
+
+Valid directions: n[orth] s[outh] e[ast] w[est]
+                  n[orth]w[est] n[orth]e[ast]
+                  s[outh]w[est] s[outh]e[ast]
+                  up down
+EOH
+
+DIRECTION_TRANSFORM = {
+    'n'  => 'north',
+    'ne' => 'northeast',
+    'e'  => 'east',
+    'se' => 'southeast',
+    's'  => 'south',
+    'sw' => 'southwest',
+    'w'  => 'west',
+    'nw' => 'northwest',
+}
+
 def die_roll(dice, sides)
     roll = 0
     (1..dice).each {
@@ -212,11 +244,16 @@ def normalize_command(cmd)
     cmd = cmd.sub(/^\s+/, '').sub(/\s+$/, '')
     case
         # straight-up substitutions
+        when cmd == '?'
+            return 'help'
         when cmd.match(/^pick up/)
             return cmd.sub(/^pick up/, 'get')
         when cmd.match(/^put down/)
             return cmd.sub(/^put down/, 'drop')
-        when cmd.match(/^move/)
+        when cmd.match(/^(move|go)\s/)
+            DIRECTION_TRANSFORM.each { |abbr, expn|
+                cmd = cmd.sub(/\s+#{abbr}$/, ' ' + expn)
+            }
             return cmd.sub(/^move/, 'go')
         when cmd.match(/^(exit|bye)$/)
             return 'quit'
@@ -228,9 +265,9 @@ def normalize_command(cmd)
             return cmd.sub(/^i.*/, 'inventory')
         when "look".index(cmd)
             return cmd.sub(/^l\S*/, 'look')
-        when cmd =~ /^h(o(l(d)?)?)?\s*/
+        when cmd =~ /^h(o(l(d)?)?)?\s/
             return cmd.sub(/^h\S*/, 'hold')
-        when cmd =~ /^u(n(h(o(l(d)?)?)?)?)?\s*/
+        when cmd =~ /^u(n(h(o(l(d)?)?)?)?)?\s/ || cmd == 'u'
             return cmd.sub(/^u\S*/, 'unhold')
         else
             return cmd
@@ -247,27 +284,6 @@ def item_search(items, name)
 end
 
 
-HELP = <<-EOH
-Valid commands:
-    l[ook]              view your surroundings
-    go <direction>      move around your environment
-    move <direction>    alias for 'go'
-    s[earch]            locate hidden features
-    get <object>        pick up an item
-    pick up <object>    alias for 'get'
-    drop <object>       put down an item
-    put down <object>   alias for 'drop'
-    h[old] <object>     ready an item for use, replacing held item (if any)
-    u[nhold]            place held item in your pack
-    i[nventory]         list items in your possession
-    quit, exit, bye     leave the game
-
-Valid directions: n[orth] s[outh] e[ast] w[est]
-                  n[orth]w[est] n[orth]e[ast]
-                  s[outh]w[est] s[outh]e[ast]
-                  up down
-EOH
-
 rooms = []
 
 rooms[0] = Room.new
@@ -277,7 +293,7 @@ rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
-rooms[1].items << Bonepile.new('north')
+rooms[1].items << Bonepile.new('southeast')
 
 
 rooms[2] = Room.new('passage')
@@ -299,6 +315,7 @@ door_room0_room1.to_door.room = rooms[2]
 rooms[2].doors << door_room0_room1.to_door
 door_room1_room0.to_door.room = rooms[2]
 rooms[2].doors << door_room1_room0.to_door
+rooms[2].items << Bonepile.new('northeast')
 
 #rooms[3] = Room.new
 
@@ -357,15 +374,24 @@ while true do
 
     case cmd
         when 'look'
+            visible_items = []
+            if pc.location.type == 'passage'
+                puts "It is hard to see far in the dark."
+                pc.location.items.each { |item|
+                    visible_items << item if item.position == pc.position
+                }
+            else
+                visible_items = pc.location.items
+            end
             print "You see "
-            if pc.location.items.size == 0
+            if visible_items.size == 0
                 puts "no objects here."
             else
-                puts "here:"
-                pc.location.items.each { |item|
+                puts (pc.location.type == 'passage' ? 'beside you' : "here") + ':'
+                visible_items.each { |item|
                     print "- #{item.indefinite} "
                     if item.position == pc.position
-                        puts "beside you"
+                        puts (pc.location.type == 'passage' ? '' : "beside you")
                     else
                         puts "in the " + item.position + " of the #{pc.location.type}"
                     end # if item.position
@@ -375,9 +401,21 @@ while true do
                 puts "\n"
                 pc.location.doors.each { |door|
                     next unless door.visible
-                    side = pc.location.type == 'room' ? 'side' : 'end'
-                    puts "You see a #{door.type} " + (door.position =~ /^(ceiling|floor)$/ ? 'in' : 'on') +
-                        " the #{door.position}" + (door.position =~ /^(ceiling|floor)$/ ? '.' : " #{side} of the #{pc.location.type}.")
+                    door_word = door.type
+                    side_preposition = (door.position =~ /^(ceiling|floor)$/ ? 'in' : 'on')
+                    if pc.location.type == 'passage'
+                        if door.position =~ /^(ceiling|floor)$/
+                            next
+                        elsif pc.position != door.position
+                            door_word = "faint light"
+                        end
+                        side_preposition = 'at'
+                    else
+                        door_word = door.type
+                    end
+                    side_word = pc.location.type == 'room' ? 'side' : 'end'
+                    puts "You see a #{door_word} #{pc.position == door.position ? 'here ' : ''}#{side_preposition} " +
+                        "the #{door.position}" + (door.position =~ /^(ceiling|floor)$/ ? '.' : " #{side_word} of the #{pc.location.type}.")
                 }
             end # if pc.location.doors.size
         when 'go'
@@ -460,8 +498,8 @@ while true do
             end
         when 'unhold'
             if pc.holding
+                puts "You stash the #{pc.holding.name} in your pack."
                 pc.holding.in_hand = false
-                puts "You stash the #{found_item.name} in your pack."
             else
                 puts "You are not holding anything."
             end
