@@ -3,6 +3,15 @@
 require 'pry'
 require 'readline'
 
+def die_roll(dice, sides)
+    roll = 0
+    (1..dice).each {
+        subroll = rand(sides)+1
+        roll += subroll
+    }
+    return roll
+end
+
 class Room
 
     attr_accessor :doors, :type, :items, :directions
@@ -157,26 +166,31 @@ class Player
 end
 
 class Item
-    attr_accessor :name, :position, :in_hand
-    def initialize (name, article, position)
+    attr_accessor :name, :position, :in_hand, :can_pick_up, :pickup_messages
+    def initialize (name, article, position, can_pick_up = true)
         @name = name
         @position = position
         @indefinite_article = article
         @in_hand = false
+        @can_pick_up = can_pick_up
+
+        # hash format: probability => "message"
+        # probability of 0 is for default case
+        @pickup_messages = {}
     end
 
     def indefinite
         return @indefinite_article + " " + @name
     end
-end
 
-def die_roll(dice, sides)
-    roll = 0
-    (1..dice).each {
-        subroll = rand(sides)+1
-        roll += subroll
-    }
-    return roll
+    def pickup_message
+        roll = die_roll(1, 100)
+        probs = @pickup_messages.keys.sort
+        probs.each { |prob|
+            return @pickup_messages[prob] if roll <= prob
+        }
+        return @pickup_messages[0]
+    end
 end
 
 def normalize_command(cmd)
@@ -193,11 +207,13 @@ def normalize_command(cmd)
             return 'quit'
 
         # abbreviations
+        when "search".index(cmd)
+            return cmd.sub(/^s.*/, 'search')
         when "inventory".index(cmd)
             return cmd.sub(/^i.*/, 'inventory')
         when "look".index(cmd)
             return cmd.sub(/^l\S*/, 'look')
-        when cmd =~ /^h(o(l(d)?)?)?\s/
+        when cmd =~ /^h(o(l(d)?)?)?\s*/
             return cmd.sub(/^h\S*/, 'hold')
         when cmd =~ /^u(n(h(o(l(d)?)?)?)?)?\s*/
             return cmd.sub(/^u\S*/, 'unhold')
@@ -221,7 +237,7 @@ Valid commands:
     l[ook]              view your surroundings
     go <direction>      move around your environment
     move <direction>    alias for 'go'
-    search              locate hidden features
+    s[earch]            locate hidden features
     get <object>        pick up an item
     pick up <object>    alias for 'get'
     drop <object>       put down an item
@@ -246,6 +262,18 @@ rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
+bones = Item.new('pile of bones', 'a', 'north', false)
+bones.pickup_messages = {
+    0 => "Ugh, what do you want those for?",
+    10 => "As you reach for one of the bones, a rat comes scurrying out of the pile and\n" +
+        "disappears into a crack in the wall! Maybe you're better off without it.",
+    15 => "You reach down to pick up a bone, but you hear something rustling around in\n" +
+        "the pile and think better of it.",
+    20 => "You think you see one of the skulls looking at you! You decide against\n" +
+        "starting a bone collection.",
+}
+rooms[1].items << bones
+
 
 rooms[2] = Room.new('passage')
 rooms[2].directions = {'southwest' => 1, 'northeast' => 1}
@@ -282,7 +310,7 @@ explore the old part of this city.
 
 Suddenly the floor weakens and gives way! You fall through a hole!
 
-You pick yourself off the ground and try to make out your surroundings.
+You pick yourself up off the ground and try to make out your surroundings.
 
 Type 'help' at any time for help.
 EOH
@@ -387,7 +415,7 @@ while true do
                                               false)
             if uncovered and die_roll(5, 12) <= 50
                 if uncovered.position == 'ceiling'
-                    puts "A cloud of dust hits you in the face. Yecch." if die_roll(4, 8) < 30
+                    puts "A cloud of dust hits you in the face. Yecch." if die_roll(4, 8) < 20
                     puts "You knock a slim chain loose from the ceiling!"
                 end
                 print "You find a #{uncovered.type} in the #{uncovered.position}"
@@ -452,12 +480,18 @@ while true do
             if available_items.size > 0
                 found_item = item_search(available_items, requested_item)
                 if found_item
-                    pc.location.item_remove(found_item)
-                    found_item.position = ''
-                    pc.inventory << found_item
-                    puts "You grab the #{found_item.name} and stash it in your pack."
+                    msg = found_item.pickup_message
+                    if found_item.can_pick_up
+                        pc.location.item_remove(found_item)
+                        found_item.position = ''
+                        pc.inventory << found_item
+                        puts msg if msg
+                        puts "You grab the #{found_item.name} and stash it in your pack."
+                    else
+                        puts msg ? msg : "You cannot pick up the #{found_item.name}."
+                    end
                 else
-                    puts "You see no objects here matching that description."
+                    puts "You see nothing beside you matching that description."
                 end
             else
                 puts "You see no objects here."
