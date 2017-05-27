@@ -193,6 +193,21 @@ class Item
     end
 end
 
+class Bonepile < Item
+    def initialize(position)
+        super("pile of bones", "a", position, false)
+        @pickup_messages = {
+            0 => "Ugh, what do you want those for?",
+            5 => "As you reach for one of the bones, a rat comes scurrying out of the pile and\n" +
+                "disappears into a crack in the wall! Maybe you're better off without it.",
+            15 => "You reach down to pick up a bone, but you hear something rustling around in\n" +
+                "the pile and think better of it.",
+            20 => "You think you see one of the skulls looking at you! You decide against\n" +
+                "starting a bone collection.",
+        }
+    end
+end
+
 def normalize_command(cmd)
     cmd = cmd.sub(/^\s+/, '').sub(/\s+$/, '')
     case
@@ -262,17 +277,7 @@ rooms[0].items << Item.new('ocarina', 'an', 'northeast')
 rooms[0].items << Item.new('pair of scissors', 'a', 'middle')
 
 rooms[1] = Room.new
-bones = Item.new('pile of bones', 'a', 'north', false)
-bones.pickup_messages = {
-    0 => "Ugh, what do you want those for?",
-    10 => "As you reach for one of the bones, a rat comes scurrying out of the pile and\n" +
-        "disappears into a crack in the wall! Maybe you're better off without it.",
-    15 => "You reach down to pick up a bone, but you hear something rustling around in\n" +
-        "the pile and think better of it.",
-    20 => "You think you see one of the skulls looking at you! You decide against\n" +
-        "starting a bone collection.",
-}
-rooms[1].items << bones
+rooms[1].items << Bonepile.new('north')
 
 
 rooms[2] = Room.new('passage')
