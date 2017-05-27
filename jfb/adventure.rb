@@ -265,10 +265,10 @@ rooms[1] = Room.new
 bones = Item.new('pile of bones', 'a', 'north', false)
 bones.pickup_messages = {
     0 => "Ugh, what do you want those for?",
-    15 => "You reach down to pick up a bone, but you hear something rustling around in\n" +
-        "the pile and think better of it.",
     10 => "As you reach for one of the bones, a rat comes scurrying out of the pile and\n" +
         "disappears into a crack in the wall! Maybe you're better off without it.",
+    15 => "You reach down to pick up a bone, but you hear something rustling around in\n" +
+        "the pile and think better of it.",
     20 => "You think you see one of the skulls looking at you! You decide against\n" +
         "starting a bone collection.",
 }
