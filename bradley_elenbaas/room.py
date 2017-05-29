@@ -46,6 +46,16 @@ class Room(object):
         # Return.
         return self.__item
     
+    @item.setter
+    def item(self, 
+             value):
+        '''
+        Set room item to value parameter.
+        '''
+        
+        # Update.
+        self.__item = value
+    
     @property
     def name(self):
         '''
