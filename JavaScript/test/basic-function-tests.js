@@ -2,15 +2,9 @@ QUnit.test( "Qunit test", function( assert ) {
   assert.equal( 1, "1", "Number one should equal character one in basic equals." )
 })
 
-QUnit.module( 
-    'Object Manipulation',
-    {
-      setup: () => {
-        player.inventory = []
-      }
-    })
+QUnit.module( 'Object Manipulation' )
 QUnit.test( 'inventoryFinder.js', function( assert ) {
-
+  player.inventory = []
   assert.equal( 
       inventoryFinder(flowers),
       false, 
