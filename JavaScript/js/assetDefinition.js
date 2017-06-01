@@ -19,7 +19,7 @@ function newId() {
 // Not for game functionality classes: messenger, etc.
 class Asset {
    constructor(name, descriptions) {
-      this.id = newId();
+      this.id = newId()
       this.name = name
       this.descriptions = descriptions
    }
