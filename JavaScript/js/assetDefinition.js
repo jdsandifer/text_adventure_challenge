@@ -10,6 +10,8 @@
 // There's probably a better way to handle the variable - feel free to tweak.
 var nextId = 1
 
+// Returns an incrementally unique ID (integer) each time it's called.
+// Relies on global variable nextId
 function newId() {
    return nextId++
 }
@@ -20,8 +22,8 @@ function newId() {
 class Asset {
    constructor(name, descriptions) {
       this.id = newId()
-      this.name = name
-      this.descriptions = descriptions
+      this.name = name || ""
+      this.descriptions = descriptions || [ "It's indescribable." ]
    }
    
    function id() {
