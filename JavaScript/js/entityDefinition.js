@@ -24,7 +24,8 @@ class Entity extends Asset {
    
    // Named it strength instead of attack to noun-ify it and allow for it
    // to represent defensive strength, ability to move heavy items, etc.
-   // E.g. if (attacker.strength() > defender.strength()) return "killed it"
+   // E.g. if (attacker.strength() > defender.strength()) return "killed it",
+   // if (player.strength() > door.strengthToOpen()) return "the door yields"
    function strength() {
       return this.strength
    }
@@ -44,11 +45,14 @@ class Entity extends Asset {
    }
    
    // Removes an item from the entity's inventory if it's there
+   // Returns true if successful, false if not
    function drop(item) {
       if (this.has(item)) {
          const index = this.inventory.indexOf(item)
          this.inventory.splice(index, 1)
+         return true
       }
+      else return false
    }
 }
 
