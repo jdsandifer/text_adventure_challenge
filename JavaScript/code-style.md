@@ -1,14 +1,14 @@
 # JavaScript Code Style
 Because it's super helpful when all of the code looks similar,
-here's the JS style guide for this project. J.D.'s grouped it into sections
-based on how many of us have discussed each so far. Feel free to add ideas
+here's the JS style guide for this project. It's grouped into sections
+based on how many of us have discussed each item so far. Feel free to add ideas
 into a section or promote them as appropriate.
 
 The over-arching factors we've used to help settle on one style have been 
 whether or not a particular item is a current best practice *and* 
 attractive to people who can offer us jobs - neither necessarily being 
 more important than the other. (Also, "best practice" is hard to verify so 
-there is some openness for clearly readable, maintainable, etc. code over 
+there is some openness for being clearly readable, maintainable, etc. code over 
 possible best practices.)
 
 
@@ -46,8 +46,8 @@ gameFunctions, etc.
       - Verbs almost exclusively for boolean return values: player.has(item), 
       door.isLocked(), entity.can(ability), etc.
       - Never contains words like return, report, calculate, etc.
-      - Good examples: player.name(), sum(valueA, valueB), room.doors(), 
-      entity.inventoryList(), etc.
+      - Good examples: player.name(), sum(valueA, valueB) - as a noun, 
+      room.doors(), entity.inventoryList(), etc.
    - Procedures (change something and rarely return values other than  
    errors/success)
       - Name describes the side effects
