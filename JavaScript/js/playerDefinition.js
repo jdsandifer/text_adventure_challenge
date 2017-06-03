@@ -18,7 +18,7 @@ class Player extends Entity {
    }
    
    // Currently food restores hunger fully.
-   //   May implement partial restoration later.
+   // May implement partial restoration later.
    function hunger() {
       return this.hunger
    }
