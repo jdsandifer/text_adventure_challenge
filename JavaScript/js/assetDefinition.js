@@ -21,18 +21,14 @@ function newId() {
 // Not for game functionality classes: messenger, etc.
 class Asset {
    constructor(name, descriptions) {
-      this.id = newId()
-      this.name = name || ""
+      let _id = newId()
+      let _name = name || ""
       this.descriptions = descriptions || [ "It's indescribable." ]
+      
+      this.id = () => return _id
+      this.name = () => return _name
    }
    
-   function id() {
-      return this.id
-   }
-   
-   function name() {
-      return this.name
-   }
    
    function description() {
       // Currently just returns the first description
