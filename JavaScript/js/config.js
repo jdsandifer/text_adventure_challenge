@@ -37,7 +37,7 @@ const setupData = {
     {
 		  name: "Study"
 		  descriptions: ["You are in a large study with lots of dusty old of books. To the east, you see an open door and to the west a hallway."],
-		  doors: ["", "open door", "", "hallway"], // assuming N,E,W,S order for now
+		  doors: {east: "open door", south: "hallway"}, // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
@@ -47,7 +47,7 @@ const setupData = {
     {
 		  name: "Kitchen"
 		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners."],
-		  doors: ["corridor", "", "secret door", "open door"],
+		  doors: {north: "corridor", west: "secret door",south: "open door"},
         // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
@@ -58,7 +58,7 @@ const setupData = {
     {
 		  name: "Room 3"
 		  descriptions: ["There is a door to the north and a hallway to the east."],
-		  doors: ["room 4 door", "hallway", "", "secret passage"],
+		  doors: {north: "room 4 door", east: "hallway", south: "secret passage"},
         // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
@@ -69,7 +69,7 @@ const setupData = {
     {
 		  name: "Room 4"
 		  descriptions: ["There is a corridor to the east and a door to the south."],
-		  doors: ["", "corridor", "room 4 door", ""],
+		  doors: {east: "corridor", west: "room 4 door"},
         // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
@@ -80,7 +80,7 @@ const setupData = {
     {
 		  name: "Hidden Nook"
 		  descriptions: ["This room is a trap. Player loses the knife and the room picks it up."],
-		  doors: ["secret door", "", "", ""],
+		  doors: {north: "secret door"},
         // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
@@ -91,7 +91,7 @@ const setupData = {
     {
 		  name: "Secret Room"
 		  descriptions: ["You have found a secret room. The only way out is the way you came in (east)."],
-		  doors: ["", "secret passage", "", ""],
+		  doors: {east: "secret passage"}
         // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
