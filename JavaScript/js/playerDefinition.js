@@ -1,3 +1,5 @@
+// J.D. will tweak this to match what we discussed during prototyping
+
 // This file is the player object definition.
 // Created 2017-06-01 by J.D. Sandifer
 
