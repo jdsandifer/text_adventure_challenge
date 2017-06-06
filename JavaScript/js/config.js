@@ -1,7 +1,7 @@
 // possible inspiration: http://textadventures.co.uk/games/play/5zyoqrsugeopel3ffhz_vq
 
 
-// Converted to new setup data format as discussed by 
+// Converted to new setup data format as discussed by
 // Jacob and J.D. on 2017-05-31.
 const setupData = {
 	game: {
@@ -9,7 +9,8 @@ const setupData = {
 	  descriptions: ["A Simple Text Adventure Game",
         "A slightly more complex text adventure game.",
         "Keep at it! I can make the game harder still..."],
-	  help: "Try simple commands like \"look\", \"go east\", and \"eat banana\". If something doesn't work, try a variant of the command. Good luck!"
+	  help: "Try simple commands like \"look\", \"go east\", and \"eat banana\". If something doesn't work, try a variant of the command. Good luck!",
+		startingRoom: 0
   },
 
   /* room map:
@@ -22,7 +23,7 @@ const setupData = {
   **********5***
 
   room 1 (Study): go east to room 2 or west to room 3
-  room 2 (Kitchen): go west to room 1 or east (turns north) to room 4, 
+  room 2 (Kitchen): go west to room 1 or east (turns north) to room 4,
                     secret door that leads to room 5
   room 3: go east to room 1 or north to room 4
   room 4: go south to room 3 or east to room 2
