@@ -84,7 +84,7 @@ class Game {
     })
 
     //init the game state
-    const gameState = this.resetState(setupData)
+    const state = this.resetState(setupData)
 
     //run function starts the game accepting input
     this.run = () => {
@@ -97,13 +97,13 @@ class Game {
             while(command = commands.next().value){
               switch (command[0]) {
                 case 'go':
-                  if(setupData.rooms[gameState.currentRoom].doors.includes(command[1])){
+                  if(setupData.rooms[state.currentRoom].doors.includes(command[1])){
                     for(let door in setupData.doors){
-                      if(door.name === setupData.rooms[gameState.currentRoom].doors[command[1]]){
+                      if(door.name === setupData.rooms[state.currentRoom].doors[command[1]]){
                         let roomNum = 0
                         for(let room in setupData.rooms){
-                          if(door.connectingRooms.includes(room.name) && room.name !== setupData.rooms[gameState.currentRoom].name){
-                            gameState.currentRoom = roomNum
+                          if(door.connectingRooms.includes(room.name) && room.name !== setupData.rooms[state.currentRoom].name){
+                            state.currentRoom = roomNum
                             messenger.addOutput(`you moved to room ${setupData.rooms[roomNum].name}`)
                           }
                           roomNum++
