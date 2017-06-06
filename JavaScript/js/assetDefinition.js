@@ -8,7 +8,7 @@
 
 // Setup for auto ID distribution
 // There's probably a better way to handle the variable - feel free to tweak.
-var nextId = 1
+let nextId = 1
 
 // Returns an incrementally unique ID (integer) each time it's called.
 // Relies on global variable nextId
