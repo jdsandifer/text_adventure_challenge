@@ -35,7 +35,7 @@ const setupData = {
   // Then there's no need to have a location for the player anywhere.
 	rooms: [
     {
-		  name: "Study"
+		  name: "Study",
 		  descriptions: ["You are in a large study with lots of dusty old of books. To the east, you see an open door and to the west a hallway."],
 		  doors: {east: "open door", south: "hallway"}, // assuming N,E,W,S order for now
 		  entities: {
@@ -45,7 +45,7 @@ const setupData = {
       items: ["book"]
 		},
     {
-		  name: "Kitchen"
+		  name: "Kitchen",
 		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners."],
 		  doors: {north: "corridor", west: "secret door",south: "open door"},
         // assuming N,E,W,S order for now
@@ -56,7 +56,7 @@ const setupData = {
       items: ["toy", "mushroom"]
     },
     {
-		  name: "Room 3"
+		  name: "Room 3",
 		  descriptions: ["There is a door to the north and a hallway to the east."],
 		  doors: {north: "room 4 door", east: "hallway", south: "secret passage"},
         // assuming N,E,W,S order for now
@@ -67,7 +67,7 @@ const setupData = {
       items: []
     },
     {
-		  name: "Room 4"
+		  name: "Room 4",
 		  descriptions: ["There is a corridor to the east and a door to the south."],
 		  doors: {east: "corridor", west: "room 4 door"},
         // assuming N,E,W,S order for now
@@ -78,7 +78,7 @@ const setupData = {
       items: []
     },
     {
-		  name: "Hidden Nook"
+		  name: "Hidden Nook",
 		  descriptions: ["This room is a trap. Player loses the knife and the room picks it up."],
 		  doors: {north: "secret door"},
         // assuming N,E,W,S order for now
@@ -89,9 +89,9 @@ const setupData = {
       items: []
     },
     {
-		  name: "Secret Room"
+		  name: "Secret Room",
 		  descriptions: ["You have found a secret room. The only way out is the way you came in (east)."],
-		  doors: {east: "secret passage"}
+		  doors: {east: "secret passage"},
         // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
@@ -103,40 +103,40 @@ const setupData = {
 
 	doors: [
     {
-		  name: "open door"
+		  name: "open door",
 		  descriptions: ["This door is open."],
-		  connectingRooms: ["Study","Kitchen"]
-		  isLocked: boolean
+		  connectingRooms: ["Study","Kitchen"],
+		  isLocked: false
 		},
     {
-		  name: "hallway"
+		  name: "hallway",
 		  descriptions: ["A short hallway"],
-		  connectingRooms: ["Study","Room 3"]
-		  isLocked: boolean,
+		  connectingRooms: ["Study","Room 3"],
+		  isLocked: false
     },
     {
-		  name: "corridor"
+		  name: "corridor",
 		  descriptions: ["A long, twisting corridor."],
-		  connectingRooms: ["Kitchen","Room 4"]
-		  isLocked: boolean,
+		  connectingRooms: ["Kitchen","Room 4"],
+		  isLocked: false
     },
     {
-		  name: "secret door"
+		  name: "secret door",
 		  descriptions: ["Shhh! No one's supposed to know about this secret door."],
-		  connectingRooms: ["Kitchen","Hidden Nook"]
-		  isLocked: boolean,
+		  connectingRooms: ["Kitchen","Hidden Nook"],
+		  isLocked: false
     },
     {
-		  name: "room 4 door"
+		  name: "room 4 door",
 		  descriptions: ["It's hard to tell what it is..."],
-		  connectingRooms: ["Room 4","Room 3"]
-		  isLocked: boolean,
+		  connectingRooms: ["Room 4","Room 3"],
+		  isLocked: false
     },
     {
-		  name: "secret passage"
+		  name: "secret passage",
 		  descriptions: ["It's a secret passage!"],
-		  connectingRooms: ["Room 3","Secret Room"]
-		  isLocked: boolean,
+		  connectingRooms: ["Room 3","Secret Room"],
+		  isLocked: false
     }
   ],
 

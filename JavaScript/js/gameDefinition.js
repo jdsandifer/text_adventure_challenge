@@ -84,28 +84,33 @@ class Game {
     })
 
     //init the game state
-    const gameState = resetState(setupData)
+    const gameState = this.resetState(setupData)
 
     //run function starts the game accepting input
     this.run = () => {
       $userInput.on('keypress', (event) => {
           //user presses enter
           if (event.which === 13) {
-            let commands = parser.validate($userInput.val()
+            let commands = parser.validate($userInput.val())
             let command = []
 
             while(command = commands.next().value){
               switch (command[0]) {
                 case 'go':
                   if(setupData.rooms[gameState.currentRoom].doors.includes(command[1])){
-                    let roomNum = 0
-                    for(let room in setupData.rooms){
-                      if(room.name === setupData.rooms[gameState.currentRoom].doors[command[1]]){
-                        gameState.currentRoom = roomNum
-                        messenger.addOutput(`you moved to room ${setupData.rooms[roomNum].name}`)
+                    for(let door in setupData.doors){
+                      if(door.name === setupData.rooms[gameState.currentRoom].doors[command[1]]){
+                        let roomNum = 0
+                        for(let room in setupData.rooms){
+                          if(door.connectingRooms.includes(room.name) && room.name !== setupData.rooms[gameState.currentRoom].name){
+                            gameState.currentRoom = roomNum
+                            messenger.addOutput(`you moved to room ${setupData.rooms[roomNum].name}`)
+                          }
+                          roomNum++
+                        }
                       }
-                      roomNum++
                     }
+
                   }
                   break
                 default: console.log('something went wrong in the parser for command', command)

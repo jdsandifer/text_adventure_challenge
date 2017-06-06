@@ -1,7 +1,7 @@
 // This file is for asset object definition and supporting functions.
 // Created 2017-06-01 by J.D. Sandifer
 
-// Classes are defined and use custom getter and setter functions to hide 
+// Classes are defined and use custom getter and setter functions to hide
 // the internal workings of the objects and allow for easy maintenance.
 // Don't access object data directly!
 
@@ -24,17 +24,15 @@ class Asset {
       let _id = newId()
       let _name = name || ""
       this.descriptions = descriptions || [ "It's indescribable." ]
-      
-      this.id = () => return _id
-      this.name = () => return _name
+
+      this.id = () =>  _id
+      this.name = () =>  _name
    }
-   
-   
-   function description() {
+
+
+   description() {
       // Currently just returns the first description
       // Can be changed to implement more complex implementations
       return this.descriptions[0]
    }
 }
-
-
