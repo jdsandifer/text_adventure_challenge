@@ -60,6 +60,9 @@ class Parser {
           _commandHistory.push(command)
           yield command
         }
+        else{
+          wordIndex++
+        }
       }
     }
 
@@ -88,6 +91,10 @@ class Game {
 
     //run function starts the game accepting input
     this.run = () => {
+      //$('#playerHealth').text('health:' + state.player.getHeath())  // ** debugging feature **
+      $('#room').text(setupData.rooms.find((room,i)=>i === state.currentRoom).name)
+      $('#description').text(setupData.rooms.find((room,i)=>i === state.currentRoom).description)
+
       $userInput.on('keypress', (event) => {
           //user presses enter
           if (event.which === 13) {
@@ -96,21 +103,21 @@ class Game {
 
             while(command = commands.next().value){
               switch (command[0]) {
-                case 'go':
-                  if(setupData.rooms[state.currentRoom].doors.includes(command[1])){
-                    for(let door in setupData.doors){
+                case 'go': //this is a mess and could be simplified if we take a deeper look are our data object structure or our room/door classes
+                  if(setupData.rooms[state.currentRoom].doors[command[1]]){
+                    for(let door of setupData.doors){
                       if(door.name === setupData.rooms[state.currentRoom].doors[command[1]]){
-                        let roomNum = 0
-                        for(let room in setupData.rooms){
-                          if(door.connectingRooms.includes(room.name) && room.name !== setupData.rooms[state.currentRoom].name){
-                            state.currentRoom = roomNum
-                            messenger.addOutput(`you moved to room ${setupData.rooms[roomNum].name}`)
+                        let enterRoomName = door.connectingRooms.find((roomName)=>roomName !== setupData.rooms[state.currentRoom].name)
+                        setupData.rooms.forEach((room,i)=>{
+                          if(room.name === enterRoomName){
+                            state.currentRoom = i
+                            messenger.addOutput(`you moved to room ${setupData.rooms[i].name}`)
+                            $('#room').text(setupData.rooms.find((room,i)=>i === state.currentRoom).name) //testing, needs to be moved
                           }
-                          roomNum++
-                        }
+                        })
+                        break //break out of the door for loop once one has been passed through
                       }
                     }
-
                   }
                   break
                 default: console.log('something went wrong in the parser for command', command)
@@ -118,7 +125,7 @@ class Game {
               }
             }
               //log the command
-              messenger.addOutput($userInput.val())
+              //messenger.addOutput($userInput.val())
 
               //clear the input field
               $userInput.val('')
@@ -130,9 +137,10 @@ class Game {
     //resets and sets up the game data
     //TODO this function needs work to build the game correctly from game data
     resetState(setupData) {
+      let player = setupData.entities.player
       return {
-        currentRoom: setupData.startingRoom,
-        player: new Player()
+        currentRoom: setupData.game.startingRoom,
+        player: new Player(player.name, player.descriptions, player.health, player.strength, player.inventory, player.hunger)
       }
     }
   }

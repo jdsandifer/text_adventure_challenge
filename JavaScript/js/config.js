@@ -184,6 +184,7 @@ const setupData = {
       descriptions: ["This is you!"],
       health: 100,
       hunger: 0,
+			strength: 100,
       inventory: ["knife","snack"],
       abilities: [],
       actionHistory: []
