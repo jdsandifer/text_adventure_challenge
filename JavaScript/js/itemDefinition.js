@@ -1,0 +1,7 @@
+//JD's working on this..
+
+class Item extends Asset {
+  constructor(name, descriptions) {
+    super(name, descriptions)
+  }
+}
