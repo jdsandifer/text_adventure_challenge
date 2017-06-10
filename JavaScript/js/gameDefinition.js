@@ -145,7 +145,7 @@ class Game {
                       state.rooms.forEach((room) => {
                         if (room.name === enterRoomName) {
                           setCurrentRoom(room)
-                          messenger.addOutput(`you moved to room ${state.currentRoom.name}`)
+                          messenger.addOutput(`You moved to room ${state.currentRoom.name}`)
                           $('#room').text(state.rooms.find((room) => room === state.currentRoom).name) //TODO testing, needs to be moved
                         }
                       })
@@ -153,9 +153,12 @@ class Game {
                     }
                   }
                 }
+                else{
+                  messenger.addOutput(`You cannot move ${command[1]} in the ${state.currentRoom.name}.`)
+                }
                 break //case break
               default:
-                console.log('something went wrong in the parser for command', command)
+                console.log('Something went wrong in the parser for command', command)
 
             }
           }//end while, no more commands to switch
