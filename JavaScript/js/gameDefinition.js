@@ -74,73 +74,83 @@ class Parser {
 
 class Game {
   constructor(setupData) {
-    //setup the DOM
+    //setup the DOM with jquery
     const $userInput = $("#command")
     const $outputBox = $("#message")
 
     //create a messenger with access to the dom output box
     const messenger = new Messenger($outputBox)
 
-    //create a new interpreter/parser
+    //create a new interpreter/parser with availible commands and synonyms
     const parser = new Parser({
       go: ['go', 'run', 'flee']
     })
 
     //init the game state
-    const state = this.resetState(setupData)
+    const state = resetState(setupData)
+
+    //private func for setting curr room
+    function setCurrentRoom(room){
+      state.currentRoom = room
+    }
+
+    //resets and sets up the game data with setupDate
+    //TODO this function needs work to build the game correctly from game data
+    function resetState(setupData) {
+      const player = setupData.entities.player
+      const newState = {
+        rooms: setupData.rooms, //TODO this init can be replaced with new room objs when ready/built
+        doors: setupData.doors, //TODO this init can be replaced with new doos objs when ready/built
+        player: new Player(player.name, player.descriptions, player.health, player.strength, player.inventory, player.hunger)
+      }
+      newState.currentRoom = newState.rooms[setupData.game.startingRoom]
+      return newState
+    }
 
     //run function starts the game accepting input
     this.run = () => {
       //$('#playerHealth').text('health:' + state.player.getHeath())  // ** debugging feature **
-      $('#room').text(setupData.rooms.find((room,i)=>i === state.currentRoom).name)
-      $('#description').text(setupData.rooms.find((room,i)=>i === state.currentRoom).description)
+      $('#room').text(state.rooms.find((room) => room === state.currentRoom).name)
+      $('#description').text(state.rooms.find((room) => room === state.currentRoom).description)
 
       $userInput.on('keypress', (event) => {
-          //user presses enter
-          if (event.which === 13) {
-            let commands = parser.validate($userInput.val())
-            let command = []
+        //user presses enter
+        if (event.which === 13) {
+          let commands = parser.validate($userInput.val())
+          let command = []
 
-            while(command = commands.next().value){
-              switch (command[0]) {
-                case 'go': //this is a mess and could be simplified if we take a deeper look are our data object structure or our room/door classes
-                  if(setupData.rooms[state.currentRoom].doors[command[1]]){
-                    for(let door of setupData.doors){
-                      if(door.name === setupData.rooms[state.currentRoom].doors[command[1]]){
-                        let enterRoomName = door.connectingRooms.find((roomName)=>roomName !== setupData.rooms[state.currentRoom].name)
-                        setupData.rooms.forEach((room,i)=>{
-                          if(room.name === enterRoomName){
-                            state.currentRoom = i
-                            messenger.addOutput(`you moved to room ${setupData.rooms[i].name}`)
-                            $('#room').text(setupData.rooms.find((room,i)=>i === state.currentRoom).name) //testing, needs to be moved
-                          }
-                        })
-                        break //break out of the door for loop once one has been passed through
-                      }
+          while (command = commands.next().value) {
+            switch (command[0]) {
+              case 'go':
+                //TODO this is a bit of a mess and could be simplified if we
+                //add functions to the room and door classes
+                //to allow finding/matching obj refrances
+                if (state.currentRoom.doors[command[1]]) {
+                  for (let door of state.doors) {
+                    if (door.name === state.currentRoom.doors[command[1]]) {
+                      let enterRoomName = door.connectingRooms.find((roomName) => roomName !== state.currentRoom.name)
+                      state.rooms.forEach((room) => {
+                        if (room.name === enterRoomName) {
+                          setCurrentRoom(room)
+                          messenger.addOutput(`you moved to room ${state.currentRoom.name}`)
+                          $('#room').text(state.rooms.find((room) => room === state.currentRoom).name) //TODO testing, needs to be moved
+                        }
+                      })
+                      break //break out of the door loop once passed through
                     }
                   }
-                  break
-                default: console.log('something went wrong in the parser for command', command)
+                }
+                break //case break
+              default:
+                console.log('something went wrong in the parser for command', command)
 
-              }
             }
-              //log the command
-              //messenger.addOutput($userInput.val())
+          }//end while, no more commands to switch
 
-              //clear the input field
-              $userInput.val('')
-            }
-          })
-      }
-    } //end constructor
-
-    //resets and sets up the game data
-    //TODO this function needs work to build the game correctly from game data
-    resetState(setupData) {
-      let player = setupData.entities.player
-      return {
-        currentRoom: setupData.game.startingRoom,
-        player: new Player(player.name, player.descriptions, player.health, player.strength, player.inventory, player.hunger)
-      }
+          //clear the input field
+          $userInput.val('')
+        }
+      })
     }
+    } //end constructor
   }
