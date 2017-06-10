@@ -29,6 +29,7 @@ class Parser {
       go: ['go', 'run', 'flee']
     }
     let _commandHistory = []
+    let _currentHistoryIndex = _commandHistory.length-1
 
     function getValidAction(str) {
       if (str) {
@@ -46,6 +47,9 @@ class Parser {
       let words = str.split(' ')
       let wordIndex = 0
 
+      _commandHistory.push(str)
+      _currentHistoryIndex = _commandHistory.length-1
+
       while (wordIndex < words.length) {
         if (getValidAction(words[wordIndex])) {
           let command = []
@@ -57,7 +61,6 @@ class Parser {
             actionPayload += words[wordIndex++] + " "
           }
           command.push(actionPayload.trim())
-          _commandHistory.push(command)
           yield command
         }
         else{
@@ -66,8 +69,18 @@ class Parser {
       }
     }
 
-    this.commandHistory = function(i) {
-      return _commandHistory[i] ? _commandHistory[i] : undefined
+    this.getLastCommandHistory = function(){
+      if(_currentHistoryIndex > 0)
+        return _commandHistory[_currentHistoryIndex--]
+      else if(_currentHistoryIndex === 0)
+        return _commandHistory[_currentHistoryIndex]
+      return undefined
+    }
+
+    this.getNextCommandHistory = function(){
+      if(_currentHistoryIndex < _commandHistory.length)
+        return _commandHistory[_currentHistoryIndex++]
+      return undefined
     }
   } //END constructor
 }
@@ -113,7 +126,7 @@ class Game {
       $('#room').text(state.rooms.find((room) => room === state.currentRoom).name)
       $('#description').text(state.rooms.find((room) => room === state.currentRoom).description)
 
-      $userInput.on('keypress', (event) => {
+      $userInput.on('keydown', (event) => {
         //user presses enter
         if (event.which === 13) {
           let commands = parser.validate($userInput.val())
@@ -149,6 +162,12 @@ class Game {
 
           //clear the input field
           $userInput.val('')
+        }
+        else if(event.which === 38){//Up arror pushed
+          $userInput.val(parser.getLastCommandHistory())
+        }
+        else if(event.which === 40){//Down arror pushed
+          $userInput.val(parser.getNextCommandHistory())
         }
       })
     }
