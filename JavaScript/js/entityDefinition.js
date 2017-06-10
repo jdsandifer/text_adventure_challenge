@@ -1,3 +1,5 @@
+// J.D.'s working on this...
+
 // This file is for entity object definition.
 // Created 2017-06-01 by J.D. Sandifer
 
@@ -8,8 +10,8 @@
 
 // Parent of all game entities: player, enemies, neutral NPC's, etc.
 class Entity extends Asset {
-   constructor(name, descriptions, health, strength, inventory) {
-      super(name, descriptions)
+   constructor(name, description, health, strength, inventory) {
+      super(name, description)
 
       const MAX_HEALTH = 100
       const MAX_STRENGTH = 100

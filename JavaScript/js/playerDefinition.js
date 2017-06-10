@@ -9,8 +9,8 @@
 
 
 class Player extends Entity {
-   constructor(name, descriptions, health, strength, inventory, hunger) {
-      super(name, descriptions, health, strength, inventory)
+   constructor(name, description, health, strength, inventory, hunger) {
+      super(name, description, health, strength, inventory)
 
       const MIN_HUNGER = 0
       const HUNGER_INCREMENT = 5

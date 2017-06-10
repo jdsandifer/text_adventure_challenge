@@ -20,19 +20,16 @@ function newId() {
 // Parent of all game assets: rooms, doors, entities, items, etc.
 // Not for game functionality classes: messenger, etc.
 class Asset {
-   constructor(name, descriptions) {
+   constructor(name, description) {
       let _id = newId()
       let _name = name || ""
-      this.descriptions = descriptions || [ "It's indescribable." ]
+      let _description = description || "It's indescribable."
 
-      this.id = () =>  _id
-      this.name = () =>  _name
-   }
-
-
-   description() {
-      // Currently just returns the first description
-      // Can be changed to implement more complex implementations
-      return this.descriptions[0]
+      this.id = () => _id
+      this.name = () => _name
+      // Currently description is just a string
+      // Can be changed to implement more complex descriptions
+      // with a informational object if needed later
+      this.description = () => _description
    }
 }
