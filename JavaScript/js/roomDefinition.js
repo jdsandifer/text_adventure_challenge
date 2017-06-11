@@ -5,6 +5,7 @@ class Room extends Asset {
     super(name, description)
     let _doors = doors || {}
     let _items = items || []
+    let _entities = entities || []
 
     this.hasDoor = direction => direction in _doors
     // canGo() will check for locked doors eventually, just checks for door now
