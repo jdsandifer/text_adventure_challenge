@@ -112,6 +112,7 @@ class Game {
       throw new Error("Game.doorByName(): No door named " + doorName + ".")
     }
 
+
     //run function starts the game accepting input
     this.run = () => {
       //$('#playerHealth').text('health:' + state.player.getHeath())  
