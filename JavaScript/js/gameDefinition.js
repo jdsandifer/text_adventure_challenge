@@ -1,3 +1,5 @@
+// Jacob's working on this...
+
 class Game {
   constructor(setupData) {
     //setup the DOM with jquery
@@ -9,7 +11,12 @@ class Game {
 
     //create a new interpreter/parser with availible commands and synonyms
     const parser = new Parser({
-      go: ['go', 'run', 'move', 'walk', 'take', 'drop']
+      go: ['go', 'walk', 'run', 'flee'],
+      look: ['look', 'l', 'view', 'examine', 'inspect'],
+      take: ['take', 't', 'pick', 'grab', 'steal'],
+      inventory: ['inventory', 'i', 'stuff', 'pack', 'backpack'],
+      use: ['use', 'u', 'operate'],
+      drop: ['drop', 'd', 'leave', 'throw', 'abandon']
     })
 
     //init the game state
@@ -18,7 +25,7 @@ class Game {
     let _items = []
     let _entities = []
     let _currentRoom = {}
-      //let _player = {}
+    let _player = {}
     resetState(setupData)
 
     //private func for setting _currentRoom
@@ -30,7 +37,7 @@ class Game {
     function resetState(setupData) {
       // Create item objects from setupData
       for (let item of setupData.items) {
-        let newItem = new item( item.name,
+        let newItem = new Item( item.name,
                                 item.descriptions[0])
         _items.push(newItem)
       }
@@ -63,23 +70,47 @@ class Game {
       // Add doors to rooms
       for (let room of setupData.rooms) {
         for (let direction in room.doors) {
-          newRoom.addDoor(direction, doorByName(room.doors[direction]))
+          let roomObject = roomByName(room.name)
+          roomObject.addDoor(direction, doorByName(room.doors[direction]))
         }
       }
 
       // Create player object from setupData
-        //_player = new Player( player.name,
-        //                      player.description,
-        //                      player.health,
-        //                      player.strength,
-        //                      player.inventory,
-        //                      player.hunger)
+      _player = new Player( setupData.entities.player.name,
+                            setupData.entities.player.descriptions[0],
+                            setupData.entities.player.health,
+                            setupData.entities.player.strength,
+                            [],
+                            setupData.entities.player.hunger)
+      for (let itemName of setupData.entities.player.inventory) {
+        let item = itemByName(itemName)
+        _player.take(item)
+      }
     }
 
-    function 
+    function itemByName(itemName) {
+      for (let item of _items) {
+        if (item.name() === itemName)
+          return item
+      }
+      throw new Error("Game.itemByName(): No item named " + itemName + ".")
+    }
 
+    function roomByName(roomName) {
+      for (let room of _rooms) {
+        if (room.name() === roomName)
+          return room
+      }
+      throw new Error("Game.roomByName(): No room named " + roomName + ".")
+    }
 
-
+    function doorByName(doorName) {
+      for (let door of _doors) {
+        if (door.name() === doorName)
+          return door
+      }
+      throw new Error("Game.doorByName(): No door named " + doorName + ".")
+    }
 
 
     //run function starts the game accepting input
@@ -88,6 +119,7 @@ class Game {
       // ** debugging feature **
       $('#room').text(_currentRoom.name())
       $('#description').text(_currentRoom.description())
+      $('#items').text(_currentRoom.listOfItems())
 
       $userInput.on('keydown', (event) => {
         //user presses enter
@@ -99,6 +131,15 @@ class Game {
             switch (command[0]) {
               case 'go':
                 go(command[1])
+                break
+              case 'take':
+                take(command[1].toLowerCase())
+                break
+              case 'inventory':
+                inventory()
+                break
+              case 'drop':
+                drop(command[1].toLowerCase())
                 break
               default:
                 console.log('Something went wrong in the parser for command', command)
@@ -118,25 +159,60 @@ class Game {
       })
     }
 
-    // Private movement function - might need to be 
+    /// Functions for commands start here *******
     function go(direction) {
       if (_currentRoom.canGo(direction)) {
-        for (let door of state.doors) {
-          if (door.name === state.currentRoom.doors[command[1]]) {
-            let enterRoomName = door.connectingRooms.find((roomName) => roomName !== state.currentRoom.name)
-            state.rooms.forEach((room) => {
-              if (room.name === enterRoomName) {
-                setCurrentRoom(room)
-                messenger.addOutput(`You moved to room ${state.currentRoom.name}`)
-                $('#room').text(state.rooms.find((room) => room === state.currentRoom).name) //TODO testing, needs to be moved
-              }
-            })
-            break //break out of the door loop once passed through
-          }
-        }
+        setCurrentRoom(_currentRoom.connectedRoom(direction))
+        //messenger.addOutput(`You went to the ${_currentRoom.name() }`)
+        $('#room').text(_currentRoom.name())
+        $('#description').text(_currentRoom.description())
+        $('#items').text(_currentRoom.listOfItems())
+
+        checkWinningConditions()
       }
       else{
         messenger.addOutput(`You can't go ${direction}.`)
+      }
+    }
+
+    function take(itemName) {
+      if (_currentRoom.hasItem(itemName)) {
+        let item = _currentRoom.removeItem(itemName)
+        _player.take(item)
+        $('#items').text(_currentRoom.listOfItems())
+      }
+      else{
+        messenger.addOutput(`There's no ${itemName} here.`)
+      }
+    }
+
+    function inventory() {
+      messenger.addOutput(_player.inventory())
+    }
+
+    function drop(itemName) {
+      if (_player.has(itemName)) {
+        let item = _player.drop(itemName)
+        _currentRoom.addItem(item)
+        $('#items').text(_currentRoom.listOfItems())
+      }
+      else{
+        messenger.addOutput(`You don't have a ${itemName}.`)
+      }
+
+      checkWinningConditions()
+    }
+
+    function checkWinningConditions() {
+      // Hacked in game-winning condition.
+      if (_currentRoom.name() === 'Secret Room'
+          && _currentRoom.hasItem('toy')
+          && _currentRoom.hasItem('knife')) {
+        _currentRoom = new Room('You win!',
+                                "You've completed the game by giving the man the toy and the knife.")
+        $('#room').text(_currentRoom.name())
+        $('#description').text(_currentRoom.description())
+        $('#items').text(_currentRoom.listOfItems())
       }
     }
   } //end constructor

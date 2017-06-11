@@ -16,24 +16,24 @@ class Room extends Asset {
     // addDoor() is required for game building (I think)
     this.addDoor = (direction, door) => { _doors[direction] = door }
 
-    this.addItem = item => _items.push(item)
+    this.addItem = item => { _items.push(item) }
     this.hasItems = () => _items.length > 0
-    // TODO: The code to turn the list into readable text should probably
+    // TODO: The code to turn the list into a sentence should probably
     // go somewhere else and this should just return a list of item names.
     this.listOfItems = () => {
       let numberOfItems = _items.length
       if (numberOfItems === 0)
-        return 'This room contains no items.'
+        return ''
       else {
-        let list = 'This room contains ' + 'a ' + _items[0]
+        let list = "There's " + 'a ' + _items[0].name()
         if (numberOfItems > 2) {
           for (let i = 1; i <= numberOfItems-2; i++) {
-            list += ', ' + 'a ' + _items[i]
+            list += ', ' + 'a ' + _items[i].name()
           }
         }
         if (numberOfItems > 1)
-          list += ', and ' + 'a ' + _items[_items.length-1]
-        list += '.'
+          list += ', and ' + 'a ' + _items[_items.length-1].name()
+        list += ' here.'
         return list
       }
     }
@@ -52,10 +52,12 @@ class Room extends Asset {
         return "You don't see that."
     }
 
+    // Check for the item before using this! Returns item that was removed.
     this.removeItem = itemName => {
       let itemToRemove = itemFromName(itemName)
       let indexToRemove = _items.indexOf(itemToRemove)
       _items.splice(indexToRemove, 1)
+      return itemToRemove
     }
 
     // private helper function to get the item object when given the name

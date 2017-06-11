@@ -1,12 +1,7 @@
-// J.D. will tweak this to match what we discussed during prototyping
+// J.D. is working on this
 
 // This file is the player object definition.
 // Created 2017-06-01 by J.D. Sandifer
-
-// Classes are defined and use custom getter and setter functions to hide
-// the internal workings of the objects and allow for easy maintenance.
-// Don't access object data directly!
-
 
 class Player extends Entity {
    constructor(name, description, health, strength, inventory, hunger) {
@@ -17,24 +12,21 @@ class Player extends Entity {
       const MAX_HUNGER = 100
       const FOOD_VALUE = 100
 
-      this.hunger = hunger || MIN_HUNGER
-   }
+      let _hunger = hunger || MIN_HUNGER
 
-   // Currently food restores hunger fully.
-   // May implement partial restoration later.
-   hunger() {
-      return this.hunger
-   }
+      // Currently food restores hunger fully.
+      // May implement partial restoration later.
+      this.hunger = () => _hunger
 
-   eat(food) {
-      if (this.has(food))
-         this.hunger = Math.max(this.hunger - FOOD_VALUE, MIN_HUNGER)
-   }
+      this.eat = food => {
+         if (this.has(food))
+            _hunger = Math.max(_hunger - FOOD_VALUE, MIN_HUNGER)
+      }
 
-   makeHungrier(hungerToAdd) {
-      var newHunger = this.hunger
-      newHunger += hungerToAdd || HUNGER_INCREMENT
-      this.hunger = Math.min(newHunger, MAX_HUNGER)
+      this.makeHungrier = hungerToAdd => {
+         var newHunger = _hunger
+         newHunger += hungerToAdd || HUNGER_INCREMENT
+         _hunger = Math.min(newHunger, MAX_HUNGER)
+      }
    }
-
 }

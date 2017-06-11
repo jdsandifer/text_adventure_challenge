@@ -1,9 +1,14 @@
-//accepts a validActions object with valid action keys with an array of synonyms
-//right now it defaults to {go: ['go', 'run', 'flee']} object
+// Jacob's working on this...
+
+// accepts a validActions object with valid action keys and an array of synonyms
+// or defaults to a standard set of actions
 class Parser {
   constructor(validActions) {
     let _validActions = validActions || {
-      go: ['go', 'run', 'flee']
+      go: ['go', 'walk', 'run', 'flee'],
+      take: ['take', 'pick', 'grab', 'steal'],
+      use: ['use', 'operate'],
+      drop: ['drop', 'leave', 'throw', 'abandon']
     }
     let _commandHistory = []
     let _currentHistoryIndex = _commandHistory.length-1
@@ -37,7 +42,7 @@ class Parser {
           while (wordIndex < words.length && !getValidAction(words[wordIndex])) {
             actionPayload += words[wordIndex++] + " "
           }
-          command.push(actionPayload.trim())
+          command.push(actionPayload.trim().toLowerCase())
           yield command
         }
         else{
