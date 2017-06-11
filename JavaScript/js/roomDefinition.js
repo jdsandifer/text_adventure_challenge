@@ -7,10 +7,14 @@ class Room extends Asset {
     let _items = items || []
 
     this.hasDoor = direction => direction in _doors
+    // canGo() will check for locked doors eventually, just checks for door now
+    this.canGo = direction => this.hasDoor(direction)
+    // errors if there's no door in that direction (check for it first!)
+    this.roomTo = direction => _doors[direction]
 
     this.addItem = item => _items.push(item)
     this.hasItems = () => _items.length > 0
-    // The code to turn the list into readable text should probably
+    // TODO: The code to turn the list into readable text should probably
     // go somewhere else and this should just return a list of item names.
     this.listOfItems = () => {
       let numberOfItems = _items.length
