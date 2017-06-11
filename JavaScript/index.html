@@ -18,14 +18,17 @@
 </head>
 <body>
   <div id="container">
-    <div id="command-list">Commands: go, run, move, walk, take, drop (they can be chained together) Other: up arrow gets last command</div>
+    <!--<div id="playerHealth"></div>-->
     <br/>
-    <div id="playerHealth"></div>
-    <br/>
+    <div id="room"></div>
     <div id="description"></div>
     <input type="text" id="command">
     <div id="message"></div>
-    <div id="room"></div>
+    <br/>
+    <div id="command-list">
+      Commands: go, run, move, walk, take, drop (they can be chained) 
+      <br />
+      Other: up and down arrows scroll through command history</div>
   </div>
 
   <script src="js/lib/bootstrap.min.js"></script>

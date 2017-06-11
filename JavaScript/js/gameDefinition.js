@@ -30,7 +30,7 @@ class Game {
     function resetState(setupData) {
       // Create item objects from setupData
       for (let item of setupData.items) {
-        let newItem = new item( item.name,
+        let newItem = new Item( item.name,
                                 item.descriptions[0])
         _items.push(newItem)
       }
@@ -63,7 +63,8 @@ class Game {
       // Add doors to rooms
       for (let room of setupData.rooms) {
         for (let direction in room.doors) {
-          newRoom.addDoor(direction, doorByName(room.doors[direction]))
+          let roomObject = roomByName(room.name)
+          roomObject.addDoor(direction, doorByName(room.doors[direction]))
         }
       }
 
@@ -76,11 +77,29 @@ class Game {
         //                      player.hunger)
     }
 
-    function 
+    function itemByName(itemName) {
+      for (let item of _items) {
+        if (item.name() === itemName)
+          return item
+      }
+      return {}
+    }
 
+    function roomByName(roomName) {
+      for (let room of _rooms) {
+        if (room.name() === roomName)
+          return room
+      }
+      return {}
+    }
 
-
-
+    function doorByName(doorName) {
+      for (let door of _doors) {
+        if (door.name() === doorName)
+          return door
+      }
+      return {}
+    }
 
     //run function starts the game accepting input
     this.run = () => {
@@ -121,19 +140,10 @@ class Game {
     // Private movement function - might need to be 
     function go(direction) {
       if (_currentRoom.canGo(direction)) {
-        for (let door of state.doors) {
-          if (door.name === state.currentRoom.doors[command[1]]) {
-            let enterRoomName = door.connectingRooms.find((roomName) => roomName !== state.currentRoom.name)
-            state.rooms.forEach((room) => {
-              if (room.name === enterRoomName) {
-                setCurrentRoom(room)
-                messenger.addOutput(`You moved to room ${state.currentRoom.name}`)
-                $('#room').text(state.rooms.find((room) => room === state.currentRoom).name) //TODO testing, needs to be moved
-              }
-            })
-            break //break out of the door loop once passed through
-          }
-        }
+        setCurrentRoom(_currentRoom.connectedRoom(direction))
+        //messenger.addOutput(`You went to the ${_currentRoom.name() }`)
+        $('#room').text(_currentRoom.name()) // needs to be moved
+        $('#description').text(_currentRoom.description())
       }
       else{
         messenger.addOutput(`You can't go ${direction}.`)

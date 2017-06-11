@@ -31,13 +31,13 @@ const setupData = {
   room 6 (Secret Room): only go east back to room 3
   */
 
-  // Maybe the first room listed is the starting room?
+  // The first room listed is the starting room.
   // Then there's no need to have a location for the player anywhere.
 	rooms: [
     {
 		  name: "Study",
-		  descriptions: ["You are in a large study with lots of dusty old of books. To the east, you see an open door and to the west a hallway."],
-		  doors: {east: "open door", south: "hallway"}, // assuming N,E,W,S order for now
+		  descriptions: ["You are in a large study with lots of dusty old books. To the east, you see an open door and to the west a hallway."],
+		  doors: {east: "open door", west: "hallway"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
@@ -47,8 +47,7 @@ const setupData = {
     {
 		  name: "Kitchen",
 		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners."],
-		  doors: {north: "corridor", west: "secret door",south: "open door"},
-        // assuming N,E,W,S order for now
+		  doors: {east: "corridor", south: "secret door", west: "open door"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
@@ -58,8 +57,7 @@ const setupData = {
     {
 		  name: "Room 3",
 		  descriptions: ["There is a door to the north and a hallway to the east."],
-		  doors: {north: "room 4 door", east: "hallway", south: "secret passage"},
-        // assuming N,E,W,S order for now
+		  doors: {north: "room 4 door", east: "hallway", west: "secret passage"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
@@ -69,8 +67,7 @@ const setupData = {
     {
 		  name: "Room 4",
 		  descriptions: ["There is a corridor to the east and a door to the south."],
-		  doors: {east: "corridor", west: "room 4 door"},
-        // assuming N,E,W,S order for now
+		  doors: {east: "corridor", south: "room 4 door"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
@@ -81,7 +78,6 @@ const setupData = {
 		  name: "Hidden Nook",
 		  descriptions: ["This room is a trap. Player loses the knife and the room picks it up."],
 		  doors: {north: "secret door"},
-        // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
@@ -90,9 +86,8 @@ const setupData = {
     },
     {
 		  name: "Secret Room",
-		  descriptions: ["You have found a secret room. The only way out is the way you came in (east)."],
+		  descriptions: ["You have found a secret room. The only way out is the way you came in."],
 		  doors: {east: "secret passage"},
-        // assuming N,E,W,S order for now
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
