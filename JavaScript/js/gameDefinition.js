@@ -1,3 +1,5 @@
+// Jacob's working on this...
+
 class Game {
   constructor(setupData) {
     //setup the DOM with jquery
@@ -10,10 +12,11 @@ class Game {
     //create a new interpreter/parser with availible commands and synonyms
     const parser = new Parser({
       go: ['go', 'walk', 'run', 'flee'],
-      look: ['look', 'view', 'examine', 'inspect'],
-      take: ['take', 'pick', 'grab', 'steal'],
-      use: ['use', 'operate'],
-      drop: ['drop', 'leave', 'throw', 'abandon']
+      look: ['look', 'l', 'view', 'examine', 'inspect'],
+      take: ['take', 't', 'pick', 'grab', 'steal'],
+      inventory: ['inventory', 'i', 'stuff', 'pack', 'backpack'],
+      use: ['use', 'u', 'operate'],
+      drop: ['drop', 'd', 'leave', 'throw', 'abandon']
     })
 
     //init the game state
@@ -22,7 +25,7 @@ class Game {
     let _items = []
     let _entities = []
     let _currentRoom = {}
-      //let _player = {}
+    let _player = {}
     resetState(setupData)
 
     //private func for setting _currentRoom
@@ -77,10 +80,11 @@ class Game {
                             setupData.entities.player.descriptions[0],
                             setupData.entities.player.health,
                             setupData.entities.player.strength,
-                            {},
+                            [],
                             setupData.entities.player.hunger)
       for (let itemName of setupData.entities.player.inventory) {
-        _player.take(itemByName(itemName))
+        let item = itemByName(itemName)
+        _player.take(item)
       }
     }
 
@@ -130,6 +134,9 @@ class Game {
               case 'take':
                 take(command[1].toLowerCase())
                 break
+              case 'inventory':
+                inventory()
+                break
               case 'drop':
                 drop(command[1].toLowerCase())
                 break
@@ -178,6 +185,10 @@ class Game {
       }
     }
 
+    function inventory() {
+      messenger.addOutput(_player.inventory())
+    }
+
     function drop(itemName) {
       if (_player.has(itemName)) {
         let item = _player.drop(itemName)
@@ -187,6 +198,8 @@ class Game {
       else{
         messenger.addOutput(`You don't have a ${itemName}.`)
       }
+
+      checkWinningConditions()
     }
 
     function checkWinningConditions() {

@@ -29,34 +29,46 @@ class Entity extends Asset {
       // if (player.strength() > door.strengthToOpen()) return "the door yields"
       this.strength = () => _strength
 
-      // Returns true if this entity *has* the parameter item in inventory
-      // and false otherwise
-      this.has = itemName => {
-            return this.inventory.some(
-                  function(item) {
-                  return item === itemToCheckFor
-                  })
-      }
-
       // Adds an item to the entity's inventory
-      take(item) {
-            this.inventory.push(item)
+      this.take = item => { _inventory.push(item) }
+
+      // TODO: The code to turn the list into a sentence should probably
+      // go somewhere else and this should just return a list of item names.
+      this.inventory = () => {
+         let numberOfItems = _inventory.length
+         if (numberOfItems === 0)
+            return ''
+         else {
+            let list = "You have " + 'a ' + _inventory[0].name()
+            if (numberOfItems > 2) {
+               for (let i = 1; i <= numberOfItems-2; i++) {
+                  list += ', ' + 'a ' + _inventory[i].name()
+               }
+            }
+         if (numberOfItems > 1)
+            list += ', and ' + 'a ' + _inventory[_inventory.length-1].name()
+            list += '.'
+            return list
+         }
       }
 
-      // Removes an item from the entity's inventory if it's there
-      // Returns true if successful, false if not
-      drop(itemName) {
-            if (this.has(item)) {
-            const index = this.inventory.indexOf(item)
-            this.inventory.splice(index, 1)
-            return true
-            }
-            else return false
+      // Returns true if this entity has the parameter item in inventory
+      // and false otherwise (no need to add item to the name, that's the only
+      // thing entities can have so it's redundant)
+      this.has = itemName => _inventory.some(item => item.name() === itemName)
+
+      // Removes an item from the entity's inventory and returns the item
+      // Check for the item before using!
+      this.drop = itemName => {
+         let itemToDrop = itemFromName(itemName)
+         let indexToRemove = _inventory.indexOf(itemToDrop)
+         _inventory.splice(indexToRemove, 1)
+         return itemToDrop
       }
       
       // private helper function to get the item object when given the name
       function itemFromName (itemName) {
-            return _items.find(item => item.name() === itemName)
+            return _inventory.find(item => item.name() === itemName)
       }
    }
 }

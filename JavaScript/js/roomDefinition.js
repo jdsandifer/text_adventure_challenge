@@ -16,9 +16,9 @@ class Room extends Asset {
     // addDoor() is required for game building (I think)
     this.addDoor = (direction, door) => { _doors[direction] = door }
 
-    this.addItem = item => _items.push(item)
+    this.addItem = item => { _items.push(item) }
     this.hasItems = () => _items.length > 0
-    // TODO: The code to turn the list into readable text should probably
+    // TODO: The code to turn the list into a sentence should probably
     // go somewhere else and this should just return a list of item names.
     this.listOfItems = () => {
       let numberOfItems = _items.length
@@ -52,6 +52,7 @@ class Room extends Asset {
         return "You don't see that."
     }
 
+    // Check for the item before using this! Returns item that was removed.
     this.removeItem = itemName => {
       let itemToRemove = itemFromName(itemName)
       let indexToRemove = _items.indexOf(itemToRemove)
