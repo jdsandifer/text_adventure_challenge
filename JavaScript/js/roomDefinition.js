@@ -9,8 +9,11 @@ class Room extends Asset {
     this.hasDoor = direction => direction in _doors
     // canGo() will check for locked doors eventually, just checks for door now
     this.canGo = direction => this.hasDoor(direction)
-    // errors if there's no door in that direction (check for it first!)
-    this.roomTo = direction => _doors[direction]
+    // returns undefined if there's no door in that direction
+    // (check for it first!)
+    this.connectedRoom = direction => _doors[direction].otherRoom(this)
+    // addDoor() is required for game building (I think)
+    this.addDoor = (direction, door) => { _doors[direction] = door }
 
     this.addItem = item => _items.push(item)
     this.hasItems = () => _items.length > 0
