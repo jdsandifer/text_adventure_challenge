@@ -6,7 +6,7 @@
 const setupData = {
 	game: {
 	  name: "the game",
-	  descriptions: ["A Simple Text Adventure Game",
+	  description: ["A Simple Text Adventure Game",
         "A slightly more complex text adventure game.",
         "Keep at it! I can make the game harder still..."],
 	  help: "Try simple commands like \"look\", \"go east\", and \"eat banana\". If something doesn't work, try a variant of the command. Good luck!",
