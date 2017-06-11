@@ -25,8 +25,8 @@ const setupData = {
   room 1 (Study): go east to room 2 or west to room 3
   room 2 (Kitchen): go west to room 1 or east (turns north) to room 4,
                     secret door that leads to room 5
-  room 3: go east to room 1 or north to room 4
-  room 4: go south to room 3 or east to room 2
+  room 3 (Foyer): go east to room 1 or north to room 4, west to room 6
+  room 4 (Backyard): go south to room 3 or east to room 2
   room 5 (Hidden Nook): only go north back to room 2
   room 6 (Secret Room): only go east back to room 3
   */
@@ -36,7 +36,7 @@ const setupData = {
 	rooms: [
     {
 		  name: "Study",
-		  descriptions: ["You are in a large study with lots of dusty old books. To the east, you see an open door and to the west a hallway."],
+		  descriptions: ["You are in a large study with lots of dusty, old books. To the east, you see an open door and to the west a hallway."],
 		  doors: {east: "open door", west: "hallway"},
 		  entities: {
 			  enemies: [],
@@ -46,8 +46,8 @@ const setupData = {
 		},
     {
 		  name: "Kitchen",
-		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners."],
-		  doors: {east: "corridor", south: "secret door", west: "open door"},
+		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners. There is a table in the center of the room."],
+		  doors: {east: "pathway", south: "secret door", west: "open door"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
@@ -55,7 +55,7 @@ const setupData = {
       items: ["toy", "mushroom"]
     },
     {
-		  name: "Room 3",
+		  name: "Foyer",
 		  descriptions: ["There is a door to the north and a hallway to the east."],
 		  doors: {north: "room 4 door", east: "hallway", west: "secret passage"},
 		  entities: {
@@ -65,14 +65,14 @@ const setupData = {
       items: []
     },
     {
-		  name: "Room 4",
-		  descriptions: ["There is a corridor to the east and a door to the south."],
-		  doors: {east: "corridor", south: "room 4 door"},
+		  name: "Backyard",
+		  descriptions: ["There is a pathway to the east and a door to the south."],
+		  doors: {east: "pathway", south: "room 4 door"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
       },
-      items: []
+      items: ["knife"]
     },
     {
 		  name: "Hidden Nook",
@@ -106,13 +106,13 @@ const setupData = {
     {
 		  name: "hallway",
 		  descriptions: ["A short hallway"],
-		  connectingRooms: ["Study","Room 3"],
+		  connectingRooms: ["Study","Foyer"],
 		  isLocked: false
     },
     {
-		  name: "corridor",
+		  name: "pathway",
 		  descriptions: ["A long, twisting corridor."],
-		  connectingRooms: ["Kitchen","Room 4"],
+		  connectingRooms: ["Kitchen","Backyard"],
 		  isLocked: false
     },
     {
@@ -124,13 +124,13 @@ const setupData = {
     {
 		  name: "room 4 door",
 		  descriptions: ["It's hard to tell what it is..."],
-		  connectingRooms: ["Room 4","Room 3"],
+		  connectingRooms: ["Backyard","Foyer"],
 		  isLocked: false
     },
     {
 		  name: "secret passage",
 		  descriptions: ["It's a secret passage!"],
-		  connectingRooms: ["Room 3","Secret Room"],
+		  connectingRooms: ["Foyer","Secret Room"],
 		  isLocked: false
     }
   ],
@@ -152,7 +152,7 @@ const setupData = {
 		  name: "knife",
 		  descriptions: ["A small pocket knife"],
 		  type: "weapon",
-		  action: "cut" // ont sure how actions will work yet
+		  action: "cut" // not sure how actions will work yet
     },
     {
 		  name: "book",

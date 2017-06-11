@@ -10,6 +10,7 @@ class Game {
     //create a new interpreter/parser with availible commands and synonyms
     const parser = new Parser({
       go: ['go', 'walk', 'run', 'flee'],
+      look: ['look', 'view', 'examine', 'inspect'],
       take: ['take', 'pick', 'grab', 'steal'],
       use: ['use', 'operate'],
       drop: ['drop', 'leave', 'throw', 'abandon']
