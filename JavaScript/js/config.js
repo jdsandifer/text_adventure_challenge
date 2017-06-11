@@ -66,7 +66,7 @@ const setupData = {
     },
     {
 		  name: "Backyard",
-		  descriptions: ["There is a pathway to the east and a door to the south."],
+		  descriptions: ["There is a pathway to the east and a door to the south. A cat is startled and scurries off as you approach."],
 		  doors: {east: "pathway", south: "room 4 door"},
 		  entities: {
 			  enemies: [],
@@ -86,7 +86,7 @@ const setupData = {
     },
     {
 		  name: "Secret Room",
-		  descriptions: ["You have found a secret room. The only way out is the way you came in."],
+		  descriptions: ["You have found a secret room. The only way out is the way you came in. A man watches you closely."],
 		  doors: {east: "secret passage"},
 		  entities: {
 			  enemies: [],
@@ -180,7 +180,7 @@ const setupData = {
       health: 100,
       hunger: 0,
 			strength: 100,
-      inventory: ["knife","snack"],
+      inventory: ["snack"],
       abilities: [],
       actionHistory: []
 	  },

@@ -56,6 +56,7 @@ class Room extends Asset {
       let itemToRemove = itemFromName(itemName)
       let indexToRemove = _items.indexOf(itemToRemove)
       _items.splice(indexToRemove, 1)
+      return itemToRemove
     }
 
     // private helper function to get the item object when given the name

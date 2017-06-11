@@ -40,7 +40,7 @@ class Parser {
           while (wordIndex < words.length && !getValidAction(words[wordIndex])) {
             actionPayload += words[wordIndex++] + " "
           }
-          command.push(actionPayload.trim())
+          command.push(actionPayload.trim().toLowerCase())
           yield command
         }
         else{
