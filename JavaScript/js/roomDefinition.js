@@ -23,17 +23,17 @@ class Room extends Asset {
     this.listOfItems = () => {
       let numberOfItems = _items.length
       if (numberOfItems === 0)
-        return 'This room contains no items.'
+        return ''
       else {
-        let list = 'This room contains ' + 'a ' + _items[0]
+        let list = "There's " + 'a ' + _items[0].name()
         if (numberOfItems > 2) {
           for (let i = 1; i <= numberOfItems-2; i++) {
-            list += ', ' + 'a ' + _items[i]
+            list += ', ' + 'a ' + _items[i].name()
           }
         }
         if (numberOfItems > 1)
-          list += ', and ' + 'a ' + _items[_items.length-1]
-        list += '.'
+          list += ', and ' + 'a ' + _items[_items.length-1].name()
+        list += ' here.'
         return list
       }
     }

@@ -9,7 +9,10 @@ class Game {
 
     //create a new interpreter/parser with availible commands and synonyms
     const parser = new Parser({
-      go: ['go', 'run', 'move', 'walk', 'take', 'drop']
+      go: ['go', 'walk', 'run', 'flee'],
+      take: ['take', 'pick', 'grab', 'steal'],
+      use: ['use', 'operate'],
+      drop: ['drop', 'leave', 'throw', 'abandon']
     })
 
     //init the game state
@@ -107,6 +110,7 @@ class Game {
       // ** debugging feature **
       $('#room').text(_currentRoom.name())
       $('#description').text(_currentRoom.description())
+      $('#items').text(_currentRoom.listOfItems())
 
       $userInput.on('keydown', (event) => {
         //user presses enter
@@ -144,6 +148,7 @@ class Game {
         //messenger.addOutput(`You went to the ${_currentRoom.name() }`)
         $('#room').text(_currentRoom.name()) // needs to be moved
         $('#description').text(_currentRoom.description())
+       $('#items').text(_currentRoom.listOfItems())
       }
       else{
         messenger.addOutput(`You can't go ${direction}.`)
