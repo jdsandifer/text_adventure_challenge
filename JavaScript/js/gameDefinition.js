@@ -26,7 +26,7 @@ class Game {
     let _entities = []
     let _currentRoom = {}
     let _player = {}
-    resetState(setupData)
+    setState(setupData)
 
     //private func for setting _currentRoom
     function setCurrentRoom(room){
@@ -34,7 +34,7 @@ class Game {
     }
 
     // Sets up the game data with setupDate (or loads previous game)
-    function resetState(setupData) {
+    function setState(setupData) {
       // Create item objects from setupData
       for (let item of setupData.items) {
         let newItem = new Item( item.name,
@@ -86,6 +86,13 @@ class Game {
         let item = itemByName(itemName)
         _player.take(item)
       }
+    }//end reset state
+
+    //debug function that shows info about room in UI
+    function debugDisplayRoomStats(room){
+      $('#room').text(room.name())
+      $('#description').text(romm.description())
+      $('#items').text(romm.listOfItems())
     }
 
     function itemByName(itemName) {
@@ -117,9 +124,7 @@ class Game {
     this.run = () => {
       //$('#playerHealth').text('health:' + state.player.getHeath())
       // ** debugging feature **
-      $('#room').text(_currentRoom.name())
-      $('#description').text(_currentRoom.description())
-      $('#items').text(_currentRoom.listOfItems())
+      debugDisplayRoomStats(_currentRoom)
 
       $userInput.on('keydown', (event) => {
         //user presses enter
@@ -142,7 +147,7 @@ class Game {
                 drop(command.payload)
                 break
               default:
-                console.log('Something went wrong in the parser for command', command)
+                throw new Error('Something went wrong in the parser for command', command)
 
             }
           }//end while, no more commands to switch
@@ -163,10 +168,7 @@ class Game {
     function go(direction) {
       if (_currentRoom.canGo(direction)) {
         setCurrentRoom(_currentRoom.connectedRoom(direction))
-        //messenger.addOutput(`You went to the ${_currentRoom.name() }`)
-        $('#room').text(_currentRoom.name())
-        $('#description').text(_currentRoom.description())
-        $('#items').text(_currentRoom.listOfItems())
+        debugDisplayRoomStats(_currentRoom)
 
         checkWinningConditions()
       }
@@ -210,9 +212,7 @@ class Game {
           && _currentRoom.hasItem('knife')) {
         _currentRoom = new Room('You win!',
                                 "You've completed the game by giving the man the toy and the knife.")
-        $('#room').text(_currentRoom.name())
-        $('#description').text(_currentRoom.description())
-        $('#items').text(_currentRoom.listOfItems())
+        debugDisplayRoomStats(_currentRoom)
       }
     }
   } //end constructor
