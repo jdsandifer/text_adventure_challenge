@@ -20,13 +20,7 @@ class Game {
     })
 
     //init the game state
-    let _rooms = []
-    let _doors = []
-    let _items = []
-    let _entities = []
-    let _currentRoom = {}
-    let _player = {}
-    setState(setupData)
+    let {_player, _rooms, _doors, _items, _entities, _currentRoom} = setState(setupData)
 
     //private func for setting _currentRoom
     function setCurrentRoom(room){
@@ -36,24 +30,18 @@ class Game {
     // Sets up the game data with setupDate (or loads previous game)
     function setState(setupData) {
       // Create item objects from setupData
-      for (let item of setupData.items) {
-        let newItem = new Item( item.name,
-                                item.descriptions[0])
-        _items.push(newItem)
-      }
+      _items = setupData.items.map((item)=> new Item(
+        item.name, item.descriptions[0])
+      )
 
       // Create entities from setupData
       // TODO: Add entity code here and in room setup below
 
       // Create room objects from setupData
-      for (let room of setupData.rooms) {
-        let newRoom = new Room( room.name,
-                                room.descriptions[0])
-        for (let itemName of room.items) {
-          newRoom.addItem(itemByName(itemName))
-        }
-        _rooms.push(newRoom)
-      }
+      //TODO finish working this out
+      _rooms = setupData.rooms.map((room)=> new Room(
+        room.name, room.descriptions[0], )
+      )
       setCurrentRoom(_rooms[0])
 
       // Create door objects from setupData

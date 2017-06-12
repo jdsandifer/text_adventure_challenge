@@ -33,9 +33,8 @@ const setupData = {
 
   // The first room listed is the starting room.
   // Then there's no need to have a location for the player anywhere.
-	rooms: [
-    {
-		  name: "Study",
+	rooms: {
+    "Study": {
 		  descriptions: ["You are in a large study with lots of dusty, old books. To the east, you see an open door and to the west a hallway."],
 		  doors: {east: "open door", west: "hallway"},
 		  entities: {
@@ -44,8 +43,7 @@ const setupData = {
       },
       items: ["book"]
 		},
-    {
-		  name: "Kitchen",
+    "Kitchen": {
 		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners. There is a table in the center of the room."],
 		  doors: {east: "pathway", south: "secret door", west: "open door"},
 		  entities: {
@@ -54,8 +52,7 @@ const setupData = {
       },
       items: ["toy", "mushroom"]
     },
-    {
-		  name: "Foyer",
+    "Foyer": {
 		  descriptions: ["There is a door to the north and a hallway to the east."],
 		  doors: {north: "room 4 door", east: "hallway", west: "secret passage"},
 		  entities: {
@@ -64,8 +61,7 @@ const setupData = {
       },
       items: []
     },
-    {
-		  name: "Backyard",
+    "Backyard": {
 		  descriptions: ["There is a pathway to the east and a door to the south. A cat is startled and scurries off as you approach."],
 		  doors: {east: "pathway", south: "room 4 door"},
 		  entities: {
@@ -74,8 +70,7 @@ const setupData = {
       },
       items: ["knife"]
     },
-    {
-		  name: "Hidden Nook",
+    "Hidden Nook": {
 		  descriptions: ["This room is a trap. Player loses the knife and the room picks it up."],
 		  doors: {north: "secret door"},
 		  entities: {
@@ -84,8 +79,7 @@ const setupData = {
       },
       items: []
     },
-    {
-		  name: "Secret Room",
+    "Secret Room": {
 		  descriptions: ["You have found a secret room. The only way out is the way you came in. A man watches you closely."],
 		  doors: {east: "secret passage"},
 		  entities: {
@@ -94,87 +88,75 @@ const setupData = {
       },
       items: []
     }
-  ],
+  },
 
-	doors: [
-    {
-		  name: "open door",
+	doors: {
+    "open door": {
 		  descriptions: ["This door is open."],
 		  connectingRooms: ["Study","Kitchen"],
 		  isLocked: false
 		},
-    {
-		  name: "hallway",
+    "hallway": {
 		  descriptions: ["A short hallway"],
 		  connectingRooms: ["Study","Foyer"],
 		  isLocked: false
     },
-    {
-		  name: "pathway",
+    "pathway": {
 		  descriptions: ["A long, twisting corridor."],
 		  connectingRooms: ["Kitchen","Backyard"],
 		  isLocked: false
     },
-    {
-		  name: "secret door",
+    "secret door": {
 		  descriptions: ["Shhh! No one's supposed to know about this secret door."],
 		  connectingRooms: ["Kitchen","Hidden Nook"],
 		  isLocked: false
     },
-    {
-		  name: "room 4 door",
+    "room 4 door": {
 		  descriptions: ["It's hard to tell what it is..."],
 		  connectingRooms: ["Backyard","Foyer"],
 		  isLocked: false
     },
-    {
-		  name: "secret passage",
+    "secret passage": {
 		  descriptions: ["It's a secret passage!"],
 		  connectingRooms: ["Foyer","Secret Room"],
 		  isLocked: false
     }
-  ],
+  },
 
-	items: [
-    {
-		  name: "cheese",
+	items: {
+    "cheese": {
 		  descriptions: ["A chunk of yellow cheese - maybe cheddar"],
 		  type: "food", // should give 50 hunger units (not implemented)
 		  action: ""
     },
-    {
-		  name: "snack",
+    "snack": {
 		  descriptions: ["A health fruit and grain snack bar"],
 		  type: "food", // should give 75 hunger units (not implemented)
 		  action: ""
     },
-    {
-		  name: "knife",
+    "knife": {
 		  descriptions: ["A small pocket knife"],
 		  type: "weapon",
 		  action: "cut" // not sure how actions will work yet
     },
-    {
-		  name: "book",
+    "cook book": {
 		  descriptions: ["A dusty old cook book that looks like it's from the 1950s"],
 		  type: "item",
 		  action: ""
     },
-    {
-		  name: "mushroom",
+    "mushroom": {
 		  descriptions: ["Nasty smelling mushroom that looks uninteresting"],
 		  type: "item",
 		  action: ""
     },
-    {
-		  name: "toy",
+    "toy": {
 		  descriptions: ["A wooden snake toy: It's amazing how flexible it is; very snakelike."],
 		  type: "item",
 		  action: ""
     }
-  ],
+  },
 	entities: {
-    player: {
+    "player": {
       name: "You",
       descriptions: ["This is you!"],
       health: 100,
@@ -184,8 +166,8 @@ const setupData = {
       abilities: [],
       actionHistory: []
 	  },
-  	enemies: [
-      {
+  	enemies: {
+      "enemy 1": {
         name: "",
         descriptions: [""],
         health: 50,
@@ -193,9 +175,9 @@ const setupData = {
         abilities: [],
         actionHistory: []
       }
-	  ],
-	  neutrals: [
-      {
+	  },
+	  neutrals: {
+      "neutral 1": {
         name: "",
         descriptions: [""],
         health: 100,
@@ -204,6 +186,6 @@ const setupData = {
         abilities: [],
         actionHistory: []
       }
-	  ]
+	  }
   }
 }
