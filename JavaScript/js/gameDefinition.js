@@ -46,8 +46,8 @@ class Game {
       // TODO: Add entity code here and in room setup below
 
       // Create room objects from setupData
-      for (let room of setupData.rooms) { 
-        let newRoom = new Room( room.name, 
+      for (let room of setupData.rooms) {
+        let newRoom = new Room( room.name,
                                 room.descriptions[0])
         for (let itemName of room.items) {
           newRoom.addItem(itemByName(itemName))
@@ -115,7 +115,7 @@ class Game {
 
     //run function starts the game accepting input
     this.run = () => {
-      //$('#playerHealth').text('health:' + state.player.getHeath())  
+      //$('#playerHealth').text('health:' + state.player.getHeath())
       // ** debugging feature **
       $('#room').text(_currentRoom.name())
       $('#description').text(_currentRoom.description())
@@ -125,21 +125,21 @@ class Game {
         //user presses enter
         if (event.which === 13) {
           let commands = parser.validate($userInput.val())
-          let command = []
+          let command = {}
 
           while (command = commands.next().value) {
-            switch (command[0]) {
+            switch (command.action) {
               case 'go':
-                go(command[1])
+                go(command.payload)
                 break
               case 'take':
-                take(command[1].toLowerCase())
+                take(command.payload)
                 break
               case 'inventory':
                 inventory()
                 break
               case 'drop':
-                drop(command[1].toLowerCase())
+                drop(command.payload)
                 break
               default:
                 console.log('Something went wrong in the parser for command', command)

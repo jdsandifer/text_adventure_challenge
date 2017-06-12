@@ -34,15 +34,15 @@ class Parser {
 
       while (wordIndex < words.length) {
         if (getValidAction(words[wordIndex])) {
-          let command = []
+          let command = {}
           let actionPayload = ""
-          command.push(getValidAction(words[wordIndex]))
+          command.action = getValidAction(words[wordIndex])
           wordIndex++
 
           while (wordIndex < words.length && !getValidAction(words[wordIndex])) {
             actionPayload += words[wordIndex++] + " "
           }
-          command.push(actionPayload.trim().toLowerCase())
+          command.payload = actionPayload.trim().toLowerCase()
           yield command
         }
         else{
