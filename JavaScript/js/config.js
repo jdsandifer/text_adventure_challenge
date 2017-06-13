@@ -33,95 +33,119 @@ const setupData = {
 
   // The first room listed is the starting room.
   // Then there's no need to have a location for the player anywhere.
-	rooms: {
-    "Study": {
+	rooms: [
+    {
+			name: "Study",
 		  descriptions: ["You are in a large study with lots of dusty, old books. To the east, you see an open door and to the west a hallway."],
-		  doors: {east: "open door", west: "hallway"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
       },
       items: ["cook book"]
 		},
-    "Kitchen": {
+    {
+			name: "Kitchen",
 		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners. There is a table in the center of the room."],
-		  doors: {east: "pathway", south: "secret door", west: "open door"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
       },
       items: ["toy", "mushroom"]
     },
-    "Foyer": {
+    {
+			name: "Foyer",
 		  descriptions: ["There is a door to the north and a hallway to the east."],
-		  doors: {north: "room 4 door", east: "hallway", west: "secret passage"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
       },
       items: []
     },
-    "Backyard": {
+    {
+			name: "Backyard",
 		  descriptions: ["There is a pathway to the east and a door to the south. A cat is startled and scurries off as you approach."],
-		  doors: {east: "pathway", south: "room 4 door"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
       },
       items: ["knife"]
     },
-    "Hidden Nook": {
+    {
+			name: "Hidden Nook",
 		  descriptions: ["This room is a trap. Player loses the knife and the room picks it up."],
-		  doors: {north: "secret door"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
       },
       items: []
     },
-    "Secret Room": {
+    {
+			name: "Secret Room",
 		  descriptions: ["You have found a secret room. The only way out is the way you came in. A man watches you closely."],
-		  doors: {east: "secret passage"},
 		  entities: {
 			  enemies: [],
 			  neutrals: [],
       },
       items: []
     }
-  },
+  ],
 
-	doors: {
-    "open door": {
+	doors: [
+    {
+			name: "open door",
 		  descriptions: ["This door is open."],
-		  connectingRooms: ["Study","Kitchen"],
+		  connectingRooms: {
+				east: "Kitchen",
+				west: "Study"
+			},
 		  isLocked: false
 		},
-    "hallway": {
+    {
+			name: "hallway",
 		  descriptions: ["A short hallway"],
-		  connectingRooms: ["Study","Foyer"],
+		  connectingRooms: {
+				east: "Study",
+				west: "Foyer"
+			},
 		  isLocked: false
     },
-    "pathway": {
+    {
+			name: "pathway",
 		  descriptions: ["A long, twisting corridor."],
-		  connectingRooms: ["Kitchen","Backyard"],
+		  connectingRooms: {
+				east: "Backyard",
+				west: "Kitchen"
+			},
 		  isLocked: false
     },
-    "secret door": {
+    {
+			name: "secret door",
 		  descriptions: ["Shhh! No one's supposed to know about this secret door."],
-		  connectingRooms: ["Kitchen","Hidden Nook"],
+		  connectingRooms: {
+				north: "Kitchen",
+				south: "Hidden Nook"
+			},
 		  isLocked: false
     },
-    "room 4 door": {
+    {
+			name: "room 4 door",
 		  descriptions: ["It's hard to tell what it is..."],
-		  connectingRooms: ["Backyard","Foyer"],
+		  connectingRooms: {
+				south: "Foyer",
+				north: "Backyard"
+			},
 		  isLocked: false
     },
-    "secret passage": {
+    {
+			name: "secret passage",
 		  descriptions: ["It's a secret passage!"],
-		  connectingRooms: ["Foyer","Secret Room"],
+		  connectingRooms: {
+				east: "Foyer",
+				west: "Secret Room"
+			},
 		  isLocked: false
     }
-  },
+  ],
 
 	items: {
     "cheese": {

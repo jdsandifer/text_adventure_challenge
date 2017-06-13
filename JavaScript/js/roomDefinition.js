@@ -1,14 +1,13 @@
 //JD's working on this..
 
 class Room extends Asset {
-  constructor(name, description, doors, items, entities) {
+  constructor(name, description, items, entities) {
     super(name, description)
-    let _doors = doors || {}
+    let _doors
     let _items = items || []
     let _entities = entities || []
 
     this.hasDoor = direction => direction in _doors
-    this.getDoor = direction => _doors[direction]
     // canGo() will check for locked doors eventually, just checks for door now
     this.canGo = direction => this.hasDoor(direction)
     // returns undefined if there's no door in that direction
