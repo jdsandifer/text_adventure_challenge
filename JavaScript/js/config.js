@@ -94,55 +94,73 @@ const setupData = {
     {
 			name: "open door",
 		  descriptions: ["This door is open."],
-		  connectingRooms: {
-				east: "Kitchen",
-				west: "Study"
-			},
+		  connectingRooms: [{
+				located: "west",
+				inRoom: "Kitchen"
+			},{
+				located: "east",
+				inRoom: "Study"
+			}],
 		  isLocked: false
 		},
     {
 			name: "hallway",
 		  descriptions: ["A short hallway"],
-		  connectingRooms: {
-				east: "Study",
-				west: "Foyer"
-			},
+			connectingRooms: [{
+				located: "west",
+				inRoom: "Study"
+			},{
+				located: "east",
+				inRoom: "Foyer"
+			}],
 		  isLocked: false
     },
     {
 			name: "pathway",
 		  descriptions: ["A long, twisting corridor."],
-		  connectingRooms: {
-				east: "Backyard",
-				west: "Kitchen"
-			},
+			connectingRooms: [{
+				located: "west",
+				inRoom: "Backyard"
+			},{
+				located: "east",
+				inRoom: "Kitchen"
+			}],
 		  isLocked: false
     },
     {
 			name: "secret door",
 		  descriptions: ["Shhh! No one's supposed to know about this secret door."],
-		  connectingRooms: {
-				north: "Kitchen",
-				south: "Hidden Nook"
-			},
+			connectingRooms: [{
+				located: "south",
+				inRoom: "Kitchen"
+			},{
+				located: "north",
+				inRoom: "Hidden Nook"
+			}],
 		  isLocked: false
     },
     {
 			name: "room 4 door",
 		  descriptions: ["It's hard to tell what it is..."],
-		  connectingRooms: {
-				south: "Foyer",
-				north: "Backyard"
-			},
+			connectingRooms: [{
+				located: "north",
+				inRoom: "Foyer"
+			},{
+				located: "south",
+				inRoom: "Backyard"
+			}],
 		  isLocked: false
     },
     {
 			name: "secret passage",
 		  descriptions: ["It's a secret passage!"],
-		  connectingRooms: {
-				east: "Foyer",
-				west: "Secret Room"
-			},
+			connectingRooms: [{
+				located: "west",
+				inRoom: "Foyer"
+			},{
+				located: "east",
+				inRoom: "Secret Room"
+			}],
 		  isLocked: false
     }
   ],

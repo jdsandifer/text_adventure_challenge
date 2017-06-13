@@ -33,36 +33,33 @@ class Game {
           player.health,
           player.strength,
           player.inventory.map(itemName =>
-            new Item(
-              itemName,
-              gameData.items[itemName].descriptions[0])),
+            new Item(itemName, gameData.items[itemName].descriptions[0])),
           player.hunger),
-
-        // Create door objects from gameData
-        _doors: gameData.doors.map(door => new Door(
-          door.name,
-          door.descriptions[0])),
 
         // Create room objects from setupData
         //TODO add entities to the room objs once entity class is implemented
-        // example of adding simple named entity here:
-        // gameData.rooms[room].entities.map(entityName => new Entity(
-        //  gameData.entities[entityName].name))
         _rooms: gameData.rooms.map(room => new Room(
           room.name,
           room.descriptions[0],
           room.items.map(itemName =>
-            new Item(
-              itemName,
-              gameData.items[itemName].descriptions[0])))),
-      }
+            new Item(itemName, gameData.items[itemName].descriptions[0])))),
 
-      //TODO working on this line still
-      gameState._doors.forEach((door,i) => door.connectRooms(gameData.doors.connectingRooms.map(direction => {
-        room: gameState._rooms.find(room => room.name === door.connectingRooms[directionId])
-        direction: directionId
-      })))
-      gameState._currentRoom = gameState._rooms.find(room => room.name() === gameData.game.startingRoom)
+        // Create door objects from gameData
+        _doors: gameData.doors.map(door => new Door(
+          door.name,
+          door.descriptions[0]))
+      }//end gameState init
+
+      //Connect the rooms to doors
+      gameState._doors.forEach((door,i) => door.connectRooms(
+        gameData.doors[i].connectingRooms.map(connection => ({
+          room: gameState._rooms.find(room => room.name() === connection.inRoom),
+          direction: connection.located
+        }))
+      ))
+
+      gameState._currentRoom = gameState._rooms.find(
+        room => room.name() === gameData.game.startingRoom)
 
       return gameState
     }
@@ -76,8 +73,6 @@ class Game {
 
     //run function starts the game accepting input
     this.run = () => {
-      //$('#playerHealth').text('health:' + state.player.getHeath())
-      // ** debugging feature **
       debugDisplayRoomStats(_currentRoom)
 
       $userInput.on('keydown', (event) => {
@@ -108,6 +103,7 @@ class Game {
 
           //clear the input field
           $userInput.val('')
+          debugDisplayRoomStats(_currentRoom)
         }
         else if(event.which === 38){//Up arror pushed
           $userInput.val(parser.getLastCommandHistory())
@@ -120,13 +116,8 @@ class Game {
 
     /// Functions for commands start here *******
     function go(direction) {
-      if (_currentRoom.getDoor(direction)) {
-        setCurrentRoom(
-          _doors.find(door => door.name() === _currentRoom.getDoor(direction))
-          .otherRoom(_currentRoom)
-        )
-        debugDisplayRoomStats(_currentRoom)
-
+      if (_currentRoom.canGo(direction)) {
+        _currentRoom = _currentRoom.connectedRoom(direction)
         checkWinningConditions()
       }
       else{
@@ -153,7 +144,6 @@ class Game {
       if (_player.has(itemName)) {
         let item = _player.drop(itemName)
         _currentRoom.addItem(item)
-        $('#items').text(_currentRoom.listOfItems())
       }
       else{
         messenger.addOutput(`You don't have a ${itemName}.`)
@@ -169,7 +159,6 @@ class Game {
           && _currentRoom.hasItem('knife')) {
         _currentRoom = new Room('You win!',
                                 "You've completed the game by giving the man the toy and the knife.")
-        debugDisplayRoomStats(_currentRoom)
       }
     }
   } //end constructor

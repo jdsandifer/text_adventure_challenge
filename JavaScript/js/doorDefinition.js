@@ -5,11 +5,11 @@ class Door extends Asset {
     super(name, description)
     let _connectedRooms
 
-    this.connectRooms = (rooms) => {
-      console.log(rooms)
-      _connectedRooms = [rooms[0].room, rooms[1].room]
-      _connectedRooms.forEach((room, i) => {
-        room.addDoor(rooms[i].direction, this)
+    // connection array like: [{room1, direction1},{room2, direction2}]
+    this.connectRooms = (connectingRooms) => {
+      _connectedRooms = connectingRooms.map(connection => {
+        connection.room.addDoor(connection.direction, this)
+        return connection.room
       })
     }
 

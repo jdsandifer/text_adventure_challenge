@@ -3,7 +3,7 @@
 class Room extends Asset {
   constructor(name, description, items, entities) {
     super(name, description)
-    let _doors
+    let _doors = []
     let _items = items || []
     let _entities = entities || []
 
