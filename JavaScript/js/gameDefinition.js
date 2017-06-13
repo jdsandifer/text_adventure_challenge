@@ -42,22 +42,21 @@ class Game {
           room.name,
           room.descriptions[0],
           room.items.map(itemName =>
-            new Item(itemName, gameData.items[itemName].descriptions[0])))),
-
-        // Create door objects from gameData
-        _doors: gameData.doors.map(door => new Door(
-          door.name,
-          door.descriptions[0]))
+            new Item(itemName, gameData.items[itemName].descriptions[0]))
+          ))
       }//end gameState init
 
-      //Connect the rooms to doors
-      gameState._doors.forEach((door,i) => door.connectRooms(
-        gameData.doors[i].connectingRooms.map(connection => ({
+      // Create door objects and connect rooms from gameData
+      gameState._doors = gameData.doors.map(door => new Door(
+        door.name,
+        door.descriptions[0],
+        door.connectingRooms.map(connection => ({
           room: gameState._rooms.find(room => room.name() === connection.inRoom),
-          direction: connection.located
-        }))
+          located: connection.located
+        })),
       ))
 
+      // Set current room from gameData
       gameState._currentRoom = gameState._rooms.find(
         room => room.name() === gameData.game.startingRoom)
 

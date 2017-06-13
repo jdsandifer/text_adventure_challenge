@@ -1,17 +1,13 @@
 //JD's working on this..
 
 class Door extends Asset {
-  constructor(name, description) {
+  constructor(name, description, connectingRooms) {
     super(name, description)
-    let _connectedRooms
 
-    // connection array like: [{room1, direction1},{room2, direction2}]
-    this.connectRooms = (connectingRooms) => {
-      _connectedRooms = connectingRooms.map(connection => {
-        connection.room.addDoor(connection.direction, this)
-        return connection.room
-      })
-    }
+    const _connectedRooms = connectingRooms.map(connection => {
+      connection.room.addDoor(connection.located, this)
+      return connection.room
+    })
 
     this.otherRoom = room => {
       if (_connectedRooms.indexOf(room) === 0)
