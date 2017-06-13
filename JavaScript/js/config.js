@@ -10,7 +10,7 @@ const setupData = {
         "A slightly more complex text adventure game.",
         "Keep at it! I can make the game harder still..."],
 	  help: "Try simple commands like \"look\", \"go east\", and \"eat banana\". If something doesn't work, try a variant of the command. Good luck!",
-		startingRoom: 0
+		startingRoom: "Study"
   },
 
   /* room map:
@@ -41,7 +41,7 @@ const setupData = {
 			  enemies: [],
 			  neutrals: [],
       },
-      items: ["book"]
+      items: ["cook book"]
 		},
     "Kitchen": {
 		  descriptions: ["You are in a messy kitchen with mold growing in its dark corners. There is a table in the center of the room."],
@@ -166,26 +166,22 @@ const setupData = {
       abilities: [],
       actionHistory: []
 	  },
-  	enemies: {
-      "enemy 1": {
-        name: "",
-        descriptions: [""],
-        health: 50,
-        inventory: [],
-        abilities: [],
-        actionHistory: []
-      }
-	  },
-	  neutrals: {
-      "neutral 1": {
-        name: "",
-        descriptions: [""],
-        health: 100,
-        hunger: 10,
-        inventory: [],
-        abilities: [],
-        actionHistory: []
-      }
-	  }
+		"enemy 1": {
+			name: "",
+			descriptions: [""],
+			health: 50,
+			inventory: [],
+			abilities: [],
+			actionHistory: []
+		},
+		"neutral 1": {
+			name: "",
+			descriptions: [""],
+			health: 100,
+			hunger: 10,
+			inventory: [],
+			abilities: [],
+			actionHistory: []
+		}
   }
 }

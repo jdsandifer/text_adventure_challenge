@@ -8,6 +8,7 @@ class Room extends Asset {
     let _entities = entities || []
 
     this.hasDoor = direction => direction in _doors
+    this.getDoor = direction => _doors[direction]
     // canGo() will check for locked doors eventually, just checks for door now
     this.canGo = direction => this.hasDoor(direction)
     // returns undefined if there's no door in that direction
@@ -37,7 +38,7 @@ class Room extends Asset {
         return list
       }
     }
-    
+
     this.hasItem = itemName => {
       if (itemFromName(itemName))
         return true

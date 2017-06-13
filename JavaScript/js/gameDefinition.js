@@ -20,99 +20,70 @@ class Game {
     })
 
     //init the game state
-    let {_player, _rooms, _doors, _items, _entities, _currentRoom} = setState(setupData)
+    let {_player, _rooms, _doors, _currentRoom} = loadGame(setupData)
 
-    //private func for setting _currentRoom
-    function setCurrentRoom(room){
-      _currentRoom = room
+    //private func for setting CurrentRoom str
+    function setCurrentRoom(roomName){
+      _currentRoom = roomName
+    }
+
+    //private func for getting CurrentRoom obj
+    function getCurrentRoom(){
+      return _rooms.find(room => _currentRoom == room.name())
     }
 
     // Sets up the game data with setupDate (or loads previous game)
-    function setState(setupData) {
-      // Create item objects from setupData
-      _items = setupData.items.map((item)=> new Item(
-        item.name, item.descriptions[0])
-      )
+    function loadGame(gameData) {
+      return {
+        // Create player object from setupData
+        _player: new Player(
+          gameData.entities.player.name,
+          gameData.entities.player.descriptions[0],
+          gameData.entities.player.health,
+          gameData.entities.player.strength,
+          gameData.entities.player.inventory.map(item =>
+            new Item(
+              item,
+              gameData.items[item].descriptions[0])),
+          gameData.entities.player.hunger),
 
-      // Create entities from setupData
-      // TODO: Add entity code here and in room setup below
+        // Create door objects from setupData
+        _doors: Object.keys(gameData.doors).map(door => new Door(
+          door,
+          gameData.doors[door].descriptions[0],
+          gameData.doors[door].connectingRooms)),
 
-      // Create room objects from setupData
-      //TODO finish working this out
-      _rooms = setupData.rooms.map((room)=> new Room(
-        room.name, room.descriptions[0], )
-      )
-      setCurrentRoom(_rooms[0])
+        // Create room objects from setupData
+        //TODO add entities to the room objs once entity class is implemented
+        // example of adding simple named entity here:
+        // gameData.rooms[room].entities.map(entityName => new Entity(
+        //  gameData.entities[entityName].name))
+        _rooms: Object.keys(gameData.rooms).map(room => new Room(
+          room,
+          gameData.rooms[room].descriptions[0],
+          gameData.rooms[room].doors,
+          gameData.rooms[room].items.map(item =>
+            new Item(
+              item,
+              gameData.items[item].descriptions[0])))),
 
-      // Create door objects from setupData
-      for (let door of setupData.doors) {
-        const room1Name = door.connectingRooms[0]
-        const room2Name = door.connectingRooms[1]
-        let connectedRooms = [roomByName(room1Name), roomByName(room2Name)]
-        let newDoor = new Door( door.name,
-                                door.descriptions[0],
-                                connectedRooms)
-        _doors.push(newDoor)
+        // Set the current room
+        _currentRoom: gameData.game.startingRoom
       }
-
-      // Add doors to rooms
-      for (let room of setupData.rooms) {
-        for (let direction in room.doors) {
-          let roomObject = roomByName(room.name)
-          roomObject.addDoor(direction, doorByName(room.doors[direction]))
-        }
-      }
-
-      // Create player object from setupData
-      _player = new Player( setupData.entities.player.name,
-                            setupData.entities.player.descriptions[0],
-                            setupData.entities.player.health,
-                            setupData.entities.player.strength,
-                            [],
-                            setupData.entities.player.hunger)
-      for (let itemName of setupData.entities.player.inventory) {
-        let item = itemByName(itemName)
-        _player.take(item)
-      }
-    }//end reset state
+    }
 
     //debug function that shows info about room in UI
     function debugDisplayRoomStats(room){
       $('#room').text(room.name())
-      $('#description').text(romm.description())
-      $('#items').text(romm.listOfItems())
+      $('#description').text(room.description())
+      $('#items').text(room.listOfItems())
     }
-
-    function itemByName(itemName) {
-      for (let item of _items) {
-        if (item.name() === itemName)
-          return item
-      }
-      throw new Error("Game.itemByName(): No item named " + itemName + ".")
-    }
-
-    function roomByName(roomName) {
-      for (let room of _rooms) {
-        if (room.name() === roomName)
-          return room
-      }
-      throw new Error("Game.roomByName(): No room named " + roomName + ".")
-    }
-
-    function doorByName(doorName) {
-      for (let door of _doors) {
-        if (door.name() === doorName)
-          return door
-      }
-      throw new Error("Game.doorByName(): No door named " + doorName + ".")
-    }
-
 
     //run function starts the game accepting input
     this.run = () => {
       //$('#playerHealth').text('health:' + state.player.getHeath())
       // ** debugging feature **
-      debugDisplayRoomStats(_currentRoom)
+      debugDisplayRoomStats(getCurrentRoom())
 
       $userInput.on('keydown', (event) => {
         //user presses enter
@@ -154,9 +125,10 @@ class Game {
 
     /// Functions for commands start here *******
     function go(direction) {
-      if (_currentRoom.canGo(direction)) {
-        setCurrentRoom(_currentRoom.connectedRoom(direction))
-        debugDisplayRoomStats(_currentRoom)
+      if (getCurrentRoom().getDoor(direction)) {
+        setCurrentRoom(_doors.find(door =>
+          door.name() === getCurrentRoom().getDoor(direction)).otherRoom(getCurrentRoom()))
+        debugDisplayRoomStats(getCurrentRoom())
 
         checkWinningConditions()
       }
@@ -166,10 +138,10 @@ class Game {
     }
 
     function take(itemName) {
-      if (_currentRoom.hasItem(itemName)) {
-        let item = _currentRoom.removeItem(itemName)
+      if (getCurrentRoom().hasItem(itemName)) {
+        let item = getCurrentRoom().removeItem(itemName)
         _player.take(item)
-        $('#items').text(_currentRoom.listOfItems())
+        $('#items').text(getCurrentRoom().listOfItems())
       }
       else{
         messenger.addOutput(`There's no ${itemName} here.`)
@@ -183,8 +155,8 @@ class Game {
     function drop(itemName) {
       if (_player.has(itemName)) {
         let item = _player.drop(itemName)
-        _currentRoom.addItem(item)
-        $('#items').text(_currentRoom.listOfItems())
+        getCurrentRoom().addItem(item)
+        $('#items').text(getCurrentRoom().listOfItems())
       }
       else{
         messenger.addOutput(`You don't have a ${itemName}.`)
@@ -195,12 +167,12 @@ class Game {
 
     function checkWinningConditions() {
       // Hacked in game-winning condition.
-      if (_currentRoom.name() === 'Secret Room'
-          && _currentRoom.hasItem('toy')
-          && _currentRoom.hasItem('knife')) {
+      if (getCurrentRoom().name() === 'Secret Room'
+          && getCurrentRoom().hasItem('toy')
+          && getCurrentRoom().hasItem('knife')) {
         _currentRoom = new Room('You win!',
                                 "You've completed the game by giving the man the toy and the knife.")
-        debugDisplayRoomStats(_currentRoom)
+        debugDisplayRoomStats(getCurrentRoom())
       }
     }
   } //end constructor
