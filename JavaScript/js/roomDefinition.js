@@ -1,11 +1,11 @@
 //JD's working on this..
 
 class Room extends Asset {
-  constructor(name, description, doors, items, entities) {
+  constructor(name, description, items, entities) {
     super(name, description)
-    let _doors = doors || {}
-    let _items = items || []
-    let _entities = entities || []
+    const _doors = []
+    const _items = items || []
+    const _entities = entities || []
 
     this.hasDoor = direction => direction in _doors
     // canGo() will check for locked doors eventually, just checks for door now
@@ -37,7 +37,7 @@ class Room extends Asset {
         return list
       }
     }
-    
+
     this.hasItem = itemName => {
       if (itemFromName(itemName))
         return true

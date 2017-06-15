@@ -21,9 +21,9 @@ function newId() {
 // Not for game functionality classes: messenger, etc.
 class Asset {
    constructor(name, description) {
-      let _id = newId()
-      let _name = name || ""
-      let _description = description || "It's indescribable."
+      const _id = newId()
+      const _name = name || ""
+      const _description = description || "It's indescribable."
 
       this.id = () => _id
       this.name = () => _name
