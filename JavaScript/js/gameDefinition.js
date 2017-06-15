@@ -32,8 +32,8 @@ class Game {
           player.descriptions[0],
           player.health,
           player.strength,
-          player.inventory.map(itemName =>
-            new Item(itemName, gameData.items[itemName].descriptions[0])),
+          player.inventory.map(item =>
+            new Item(item.name, item.descriptions[0])),
           player.hunger),
 
         // Create room objects from setupData
@@ -41,8 +41,8 @@ class Game {
         _rooms: gameData.rooms.map(room => new Room(
           room.name,
           room.descriptions[0],
-          room.items.map(itemName =>
-            new Item(itemName, gameData.items[itemName].descriptions[0]))
+          room.items.map(item =>
+            new Item(item.name, item.descriptions[0]))
           ))
       }//end gameState init
 
@@ -62,7 +62,7 @@ class Game {
       // Set current room from gameData
       gameState._currentRoom = successOrError(
           gameState._rooms.find(room => room.name() === gameData.game.startingRoom),
-          `Set current room failed for room ${gameData.game.startingRoom}`
+          `Set current room failed for room "${gameData.game.startingRoom}"`
         )
 
       return gameState

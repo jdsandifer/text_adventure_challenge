@@ -41,7 +41,12 @@ const setupData = {
 			  enemies: [],
 			  neutrals: [],
       },
-      items: ["cook book"]
+      items: [{
+				name: "cook book",
+			  descriptions: ["A dusty old cook book that looks like it's from the 1950s"],
+			  type: "item",
+			  action: ""
+			}]
 		},
     {
 			name: "Kitchen",
@@ -50,7 +55,26 @@ const setupData = {
 			  enemies: [],
 			  neutrals: [],
       },
-      items: ["toy", "mushroom"]
+      items: [
+				{
+					name: "mushroom",
+				  descriptions: ["Nasty smelling mushroom that looks uninteresting"],
+				  type: "item",
+				  action: ""
+		    },
+		    {
+					name: "toy",
+				  descriptions: ["A wooden snake toy: It's amazing how flexible it is; very snakelike."],
+				  type: "item",
+				  action: ""
+		    },
+				{
+					name: "cheese",
+				  descriptions: ["A chunk of yellow cheese - maybe cheddar"],
+				  type: "food", // should give 50 hunger units (not implemented)
+				  action: ""
+		    },
+			]
     },
     {
 			name: "Foyer",
@@ -68,7 +92,14 @@ const setupData = {
 			  enemies: [],
 			  neutrals: [],
       },
-      items: ["knife"]
+      items: [
+				{
+					name: "knife",
+				  descriptions: ["A small pocket knife"],
+				  type: "weapon",
+				  action: "cut" // not sure how actions will work yet
+		    },
+			]
     },
     {
 			name: "Hidden Nook",
@@ -165,38 +196,6 @@ const setupData = {
     }
   ],
 
-	items: {
-    "cheese": {
-		  descriptions: ["A chunk of yellow cheese - maybe cheddar"],
-		  type: "food", // should give 50 hunger units (not implemented)
-		  action: ""
-    },
-    "snack": {
-		  descriptions: ["A health fruit and grain snack bar"],
-		  type: "food", // should give 75 hunger units (not implemented)
-		  action: ""
-    },
-    "knife": {
-		  descriptions: ["A small pocket knife"],
-		  type: "weapon",
-		  action: "cut" // not sure how actions will work yet
-    },
-    "cook book": {
-		  descriptions: ["A dusty old cook book that looks like it's from the 1950s"],
-		  type: "item",
-		  action: ""
-    },
-    "mushroom": {
-		  descriptions: ["Nasty smelling mushroom that looks uninteresting"],
-		  type: "item",
-		  action: ""
-    },
-    "toy": {
-		  descriptions: ["A wooden snake toy: It's amazing how flexible it is; very snakelike."],
-		  type: "item",
-		  action: ""
-    }
-  },
 	entities: {
     "player": {
       name: "You",
@@ -204,7 +203,14 @@ const setupData = {
       health: 100,
       hunger: 0,
 			strength: 100,
-      inventory: ["snack"],
+      inventory: [
+				{
+					name: "snack",
+				  descriptions: ["A health fruit and grain snack bar"],
+				  type: "food", // should give 75 hunger units (not implemented)
+				  action: ""
+		    }
+			],
       abilities: [],
       actionHistory: []
 	  },
