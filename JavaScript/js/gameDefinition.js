@@ -46,25 +46,30 @@ class Game {
           ))
       }//end gameState init
 
-      // Create door objects and connect rooms from gameData
+      // Create door objects and connect rooms from gameData/gameState
       gameState._doors = gameData.doors.map(door => new Door(
         door.name,
         door.descriptions[0],
         door.connectingRooms.map(connection => ({
-          room: gameState._rooms.find(room => room.name() === connection.inRoom),
+          room: successOrError(
+            gameState._rooms.find(room => room.name() === connection.inRoom),
+            `Connect failed for room "${connection.inRoom}" on door "${door.name}"`
+          ),
           located: connection.located
         })),
       ))
 
       // Set current room from gameData
-      gameState._currentRoom = gameState._rooms.find(
-        room => room.name() === gameData.game.startingRoom)
+      gameState._currentRoom = successOrError(
+          gameState._rooms.find(room => room.name() === gameData.game.startingRoom),
+          `Set current room failed for room ${gameData.game.startingRoom}`
+        )
 
       return gameState
     }
 
     //debug function that shows info about room in UI
-    function debugDisplayRoomStats(room){
+    function displayRoomStats(room){
       $('#room').text(room.name())
       $('#description').text(room.description())
       $('#items').text(room.listOfItems())
@@ -72,7 +77,7 @@ class Game {
 
     //run function starts the game accepting input
     this.run = () => {
-      debugDisplayRoomStats(_currentRoom)
+      displayRoomStats(_currentRoom)
 
       $userInput.on('keydown', (event) => {
         //user presses enter
@@ -102,7 +107,7 @@ class Game {
 
           //clear the input field
           $userInput.val('')
-          debugDisplayRoomStats(_currentRoom)
+          displayRoomStats(_currentRoom)
         }
         else if(event.which === 38){//Up arror pushed
           $userInput.val(parser.getLastCommandHistory())
@@ -159,6 +164,13 @@ class Game {
         _currentRoom = new Room('You win!',
                                 "You've completed the game by giving the man the toy and the knife.")
       }
+    }
+
+    function successOrError(test, errMsg){
+      if(!test){
+        throw new Error(errMsg)
+      }
+      return test
     }
   } //end constructor
 }
