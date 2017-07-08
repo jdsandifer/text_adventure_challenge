@@ -1,13 +1,23 @@
-// Jacob's working on this...
-
+/**
+ * Main game object that controls game flow.
+ */
 class Game {
-  constructor(setupData) {
-    //setup the DOM with jquery
-    const $userInput = $("#command")
-    const $messageArea = $("#message")
 
-    //create a messenger with access to the dom output box
+  /**
+   * @param setupData An object specifcally formatted to provide info to the game.
+   * See config.js for example structure.
+   */
+  constructor(setupData) {
+    // Link the DOM command input area using jQuery
+    const $userInput = $("#command")
+
+    // Link the DOM output areas using jQuery
+    const $messageArea = $("#message")
     const messenger = new Messenger($messageArea)
+    const $nameArea = $("#name")
+    const roomNamer = new Descriptor($nameArea)
+    const $descriptionArea = $("#description")
+    const descriptor = new Descriptor($descriptionArea)
 
     //create a new interpreter/parser with availible commands and synonyms
     const parser = new Parser({
@@ -19,10 +29,15 @@ class Game {
       drop: ['drop', 'd', 'leave', 'throw', 'abandon']
     })
 
-    //init the game state
+    // Initialize the game state
     let {_player, _rooms, _doors, _currentRoom} = loadGame(setupData)
 
-    // Sets up the game data with gameData (or loads previous game)
+    /**
+     * Loads a game from a saved game state (or initializes from a default state).
+     *
+     * @param gameData Specifically formatted object that represents the game state.
+     * See config.js for example structure.
+     */
     function loadGame(gameData) {
       const player = gameData.entities.player
       const gameState = {
@@ -68,16 +83,15 @@ class Game {
       return gameState
     }
 
-    //debug function that shows info about room in UI
-    function displayRoomStats(room){
-      $('#room').text(room.name())
-      $('#description').text(room.description())
-      $('#items').text(room.listOfItems())
+    // Function to display initial info about the current room
+    function displayRoomInfo(room) {
+      roomNamer.display(room.name())
+      descriptor.display(room.description())
     }
 
     //run function starts the game accepting input
     this.run = () => {
-      displayRoomStats(_currentRoom)
+      displayRoomInfo(_currentRoom)
 
       $userInput.on('keydown', (event) => {
         //user presses enter
@@ -107,7 +121,7 @@ class Game {
 
           //clear the input field
           $userInput.val('')
-          displayRoomStats(_currentRoom)
+          displayRoomInfo(_currentRoom)
         }
         else if(event.which === 38){//Up arror pushed
           $userInput.val(parser.getLastCommandHistory())
@@ -125,7 +139,7 @@ class Game {
         checkWinningConditions()
       }
       else{
-        messenger.addOutput(`You can't go ${direction}.`)
+        messenger.addMessage(`You can't go ${direction}.`)
       }
     }
 
@@ -136,12 +150,12 @@ class Game {
         $('#items').text(_currentRoom.listOfItems())
       }
       else{
-        messenger.addOutput(`There's no ${itemName} here.`)
+        messenger.addMessage(`There's no ${itemName} here.`)
       }
     }
 
     function inventory() {
-      messenger.addOutput(_player.inventory())
+      messenger.addMessage(_player.inventory())
     }
 
     function drop(itemName) {
@@ -150,7 +164,7 @@ class Game {
         _currentRoom.addItem(item)
       }
       else{
-        messenger.addOutput(`You don't have a ${itemName}.`)
+        messenger.addMessage(`You don't have a ${itemName}.`)
       }
 
       checkWinningConditions()
