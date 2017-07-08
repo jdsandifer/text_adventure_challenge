@@ -35,7 +35,7 @@ gameFunctions, etc.
    - getter names do not contain the word "get" (or return, etc.)
    - setter names do contain the word "set" (although these should be rare)
    - camelCase for most items
-   - PascalCase
+   - PascalCase for Objects
    
 
 ### New ideas from one of us:
@@ -50,8 +50,8 @@ gameFunctions, etc.
       room.doors(), entity.inventoryList(), etc.
    - Procedures (change something and rarely return values other than  
    errors/success)
-      - Name describes the side effects
+      - Name describes the side effects (changes effected outside the function)
       - Usually contain a verb
-      - Rarely contains "And" - could be a sign of too much in one procedure
+      - Rarely contain "And" - could be a sign of too much in one procedure
       - Good examples: player.setLocation(newRoom), updateDisplay(),  
       displayMessage(message)

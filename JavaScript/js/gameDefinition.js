@@ -4,10 +4,10 @@ class Game {
   constructor(setupData) {
     //setup the DOM with jquery
     const $userInput = $("#command")
-    const $outputBox = $("#message")
+    const $messageArea = $("#message")
 
     //create a messenger with access to the dom output box
-    const messenger = new Messenger($outputBox)
+    const messenger = new Messenger($messageArea)
 
     //create a new interpreter/parser with availible commands and synonyms
     const parser = new Parser({
