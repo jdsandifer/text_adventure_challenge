@@ -21,7 +21,7 @@ class Messenger {
       this.render()
     }
 
-    this.clearHistory = () => _messageHistory = []
+    this.clearHistory = () => { _messageHistory = [] }
 
     // Display the list of messages
     this.render = () => {
