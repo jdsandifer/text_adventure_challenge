@@ -10,7 +10,7 @@ class Descriptor {
     this.descriptionArea = $descriptionArea   // A dom object in which to place text
 
     /**
-    * @param description A string to display to the user
+    * @param description An info string to display to the user
     */
     this.display = description => {
       // Format the description for html
