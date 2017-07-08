@@ -148,9 +148,9 @@ const setupData = {
     },
     {
 			name: "pathway",
-		  descriptions: ["A long, twisting corridor."],
+		  descriptions: ["A long, twisting path."],
 			connectingRooms: [{
-				located: "west",
+				located: "east",
 				inRoom: "Backyard"
 			},{
 				located: "east",
