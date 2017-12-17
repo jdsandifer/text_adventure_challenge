@@ -1,9 +1,19 @@
-# text_adventure_challenge
-Build a text based adventure game! 
+# Text Adventure Challenge
+This was a challenge problem at a meetup that I and two others worked on together.
 
-Feel free to use this prompt to get you started
+### The Challenge
 
-You find yourself walking down a forest path there are birds chirping, trees are moving slowly in the wind. As you round a corner in path you see the opening to a cave . It is wet, covered with vines and moss little ferns are growing along the face of the cave wall. 
+The task was to create a basic text adventure game. The player should be able to enter commands like "go north" to move around the world and interact with items in the world like this: "pick up candy" or "drop ball". The world is only described through text printed to the screen.
+
+The game should include at least four rooms/areas, one item to pick up, and a condition that could be met to win the game. Everything else was up to us to decide.
+
+
+
+### Optional Prompt
+
+The optional prompt for the challenge was this ( we didn't end up using it, but it gives an example of basic gameplay expectations ):
+
+You find yourself walking down a forest path there are birds chirping, trees are moving slowly in the wind. As you round a corner in path you see the opening to a cave. It is wet, covered with vines and moss. Little ferns are growing along the face of the cave wall. 
 
 Something stirs within you, pulling you toward the cave entrance. As you get near a strong gust of wind comes from within the cave. It is not musty as you would expect coming from within a cave, but it carries a crisp freshness to it and the sent of salt.
 
